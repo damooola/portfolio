@@ -69,7 +69,7 @@ void main() {
     await mouse.addPointer(location: const Offset(1190, 890));
 
     // Hovering "learning" previews its panel.
-    await mouse.moveTo(tester.getCenter(find.text('NOW · LEARNING')));
+    await mouse.moveTo(tester.getCenter(find.text('LEARNING')));
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.text('CURRENTLY LEARNING'), findsOneWidget);
 
@@ -79,7 +79,7 @@ void main() {
     expect(find.text('CURRENTLY LEARNING'), findsNothing);
 
     // Clicking pins it; it stays after the mouse leaves.
-    final learning = tester.getCenter(find.text('NOW · LEARNING'));
+    final learning = tester.getCenter(find.text('LEARNING'));
     await mouse.moveTo(learning);
     await tester.pump();
     await mouse.down(learning);

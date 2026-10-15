@@ -166,8 +166,8 @@ class _NowTileState extends State<_NowTile> {
   bool _hover = false;
 
   String get _label => switch (widget.panel) {
-    NowPanel.chess => 'CHESS',
-    NowPanel.music => 'ON REPEAT',
+    NowPanel.chess => 'CHESS.COM',
+    NowPanel.music => 'SPOTIFY',
     NowPanel.chelsea => 'CHELSEA',
     NowPanel.learning => 'LEARNING',
   };
@@ -261,7 +261,7 @@ class _NowTileState extends State<_NowTile> {
         ? 'CLICK TO CLOSE'
         : hinting
         ? '↓ $_hint'
-        : (widget.compact ? _label : 'NOW · $_label');
+        : _label;
 
     final tile = AnimatedContainer(
       duration: AppMotion.hover,
