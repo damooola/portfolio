@@ -3,7 +3,8 @@
 // changes. Anything marked TODO is a placeholder you should personalize.
 //
 // Every figure in TrophiesData comes straight from the resume PDF. Don't add
-// numbers here that aren't on the resume.
+// numbers here that aren't on the resume. Career dates and titles follow
+// LinkedIn, which is the source of truth for the timeline.
 
 class ProfileData {
   static const name = 'Damola Nelson';
@@ -12,12 +13,13 @@ class ProfileData {
   static const initials = 'DN';
   static const title = 'Flutter Mobile Engineer';
   static const role = 'Flutter mobile engineer in Lagos.';
-  static const status = 'Online — building offline-first apps';
+  static const status = 'Open to senior Flutter roles · contract · remote';
 
-  // TODO: tagline was drafted for you — rewrite in your own voice.
+  /// From my LinkedIn summary.
   static const tagline =
-      'I build apps that keep working when the network doesn\'t, and I sweat '
-      'the small stuff: the OTP box, the retry, the half-second of feedback.';
+      'I build Flutter apps that ship, on Android and iOS, in production. '
+      'Fintech, marketplaces and travel, with payments, maps and real-time '
+      'features, and code the next developer can actually maintain.';
 
   static const githubUrl = 'https://github.com/damooola';
   static const githubHandle = 'damooola';
@@ -43,11 +45,10 @@ class NowPlayingData {
   /// TheSportsDB team id for Chelsea: last result and next fixture, live.
   static const chelseaTeamId = '133610';
 
-  // TODO: the learning blurb was drafted for you — make it yours.
-  static const learning = 'Go, one service at a time';
+  static const learning = 'Go, deeper every week';
   static const learningDetail =
-      'Writing small Go services to understand the other end of the APIs my '
-      'apps talk to.';
+      'I already ship Go on the backend at NeoCash, and I\'m still levelling '
+      'up: the server side of the same APIs my Flutter apps talk to.';
   static const learningUrl = 'https://github.com/damooola';
 }
 
@@ -96,11 +97,12 @@ class ProjectsData {
       tags: ['Flutter', 'Riverpod', 'Go', 'SQLCipher', 'CI/CD'],
       demo: DemoKind.offlineSync,
       builtForReal:
-          'Built for real: an outbox with ordering, retries and idempotency '
-          'keys, over a SQLCipher-encrypted local database and a Go backend.',
+          'Built for real: main contributor (360 of 448 commits) to a field app '
+          'whose outbox syncs with ordering, retries and idempotency keys, over '
+          'a SQLCipher-encrypted local database.',
       result:
           'Result: nothing lost or duplicated when the connection drops '
-          'mid-write, with encryption checked on a real device in CI.',
+          'mid-write, with encryption at rest tested on an Android emulator in CI.',
     ),
     Project(
       name: 'Event marketplace',
@@ -109,12 +111,15 @@ class ProjectsData {
       summary:
           'A two-sided marketplace connecting event planners with vendors. '
           'I was the only mobile engineer, end to end.',
-      tags: ['Flutter', 'BLoC', 'Maps', 'Socket.IO', 'Firebase'],
+      tags: ['Flutter', 'BLoC', 'Socket.IO', 'Firebase', 'GetIt'],
       demo: DemoKind.routeMap,
       builtForReal:
-          'Built for real: maps and live tracking, real-time chat with an '
-          'offline message queue, bookings and payments, for clients and vendors.',
-      result: 'Result: shipped solo to both the App Store and Google Play.',
+          'Built for real: Socket.IO chat with an offline queue and voice notes, '
+          'a calendar built from scratch, co-planning roles, escrow bookings, '
+          'Paystack boosts and Flutterwave payments.',
+      result:
+          'Result: wrote 694 of its 707 commits and shipped it to the App Store '
+          'and Google Play.',
     ),
     Project(
       name: 'OTP boxes, done properly',
@@ -148,6 +153,11 @@ class Trophy {
 class TrophiesData {
   static const trophies = <Trophy>[
     Trophy(
+      '−40%',
+      'Bug exterminator',
+      'Audited a crypto app\'s codebases and cut crashes by about 40%.',
+    ),
+    Trophy(
       '−25%',
       'Crash buster',
       'Cut app crashes by about 25% on a live lending app.',
@@ -163,9 +173,14 @@ class TrophiesData {
       'Integrated Paystack, Flutterwave, Razorpay and Stripe.',
     ),
     Trophy(
-      '2',
-      'Store double',
-      'Shipped apps to both the App Store and Google Play.',
+      '98%',
+      'Solo build',
+      'Wrote 694 of Ajarra\'s 707 commits, from first screen to both stores.',
+    ),
+    Trophy(
+      '27',
+      'Published author',
+      'Posts on Daily Flutters about real Flutter bugs and how I fixed them.',
     ),
   ];
 }
@@ -193,13 +208,19 @@ class PlayerCardData {
   static const toolkit = [
     'Riverpod',
     'BLoC',
+    'Provider',
     'Drift',
     'SQLCipher',
+    'Isar',
+    'Hive',
     'Firebase',
+    'Supabase',
+    'go_router',
+    'Freezed',
     'Go',
     'Kotlin',
-    'Swift',
-    'Fastlane',
+    'Java',
+    'GitHub Actions',
     'Figma',
   ];
 }
@@ -251,4 +272,110 @@ class PersonalPostsData {
       'assets/writing/happiness.jpg',
     ),
   ];
+}
+
+/// Work history for the career log. Titles, employers and dates follow
+/// LinkedIn.
+class Role {
+  final String title;
+  final String company;
+  final String? product;
+  final String start;
+  final String end;
+  final String place;
+  final String summary;
+  final List<String> tags;
+
+  const Role({
+    required this.title,
+    required this.company,
+    this.product,
+    required this.start,
+    required this.end,
+    required this.place,
+    required this.summary,
+    this.tags = const [],
+  });
+
+  bool get current => end == 'Present';
+}
+
+class CareerData {
+  static const roles = <Role>[
+    Role(
+      title: 'Software Engineer',
+      company: 'NeoCash',
+      product: 'Shepherd Trust Microfinance Bank',
+      start: 'Jan 2026',
+      end: 'Present',
+      place: 'Lagos',
+      summary:
+          'Flutter apps and the Go backend behind them. In the customer app: '
+          'ten loan-rejection recovery flows, on-device guided face capture, '
+          'location-aware address checks and a server-side PIN migration. Main '
+          'contributor to the offline-first field-agent app.',
+      tags: ['Flutter', 'Riverpod', 'Go', 'Drift'],
+    ),
+    Role(
+      title: 'Mobile Developer',
+      company: 'AJ\'s Rentals Ltd',
+      product: 'Ajarra',
+      start: 'Jun 2025',
+      end: 'May 2026',
+      place: 'Lagos',
+      summary:
+          'Built and shipped the Ajarra app on Android and iOS, writing 694 of '
+          'its 707 commits: Socket.IO chat with voice notes, a calendar built '
+          'from scratch, co-planning roles, escrow bookings, and Paystack and '
+          'Flutterwave payments.',
+      tags: ['Flutter', 'BLoC', 'Socket.IO', 'Payments'],
+    ),
+    Role(
+      title: 'Flutter Developer',
+      company: 'Deolang',
+      start: 'Jan 2025',
+      end: 'May 2025',
+      place: 'India · remote',
+      summary:
+          'Turned Figma designs into a guest-house finder app with BLoC, REST '
+          'APIs and Razorpay payments.',
+      tags: ['BLoC', 'Razorpay'],
+    ),
+    Role(
+      title: 'Flutter Developer',
+      company: 'Hermex Travels',
+      start: 'Oct 2024',
+      end: 'Dec 2024',
+      place: 'Lagos',
+      summary:
+          'Added an AI support chatbot and Flutterwave payments for flights '
+          'and hotels, and cut UI boilerplate by about 40%.',
+      tags: ['Flutterwave', 'AI chat'],
+    ),
+    Role(
+      title: 'Flutter Developer',
+      company: 'Decentralyne',
+      start: 'Aug 2024',
+      end: 'Oct 2024',
+      place: 'Lagos',
+      summary:
+          'Audited the Android and iOS codebases of a crypto asset app and cut '
+          'crashes by about 40%.',
+      tags: ['Performance', 'Refactoring'],
+    ),
+    Role(
+      title: 'Network Engineer',
+      company: 'Nigerian Ports Authority',
+      start: 'Apr 2024',
+      end: 'Dec 2024',
+      place: 'Lagos',
+      summary:
+          'Routers (BGP), Cisco and Huawei switches, VLANs and Sophos '
+          'firewalls. Why I care what happens on the wire.',
+      tags: ['Networking'],
+    ),
+  ];
+
+  static const education =
+      'BEng Electrical & Electronics Engineering · Obafemi Awolowo University · 2020 – 2025';
 }

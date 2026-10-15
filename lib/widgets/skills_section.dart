@@ -21,7 +21,7 @@ class SkillsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionHeader(
-          index: '02',
+          index: '03',
           label: 'Skills',
           title: 'Player profile',
           caption:

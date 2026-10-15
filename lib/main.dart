@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'services/sfx.dart';
 import 'theme/app_theme.dart';
+import 'widgets/career_section.dart';
 import 'widgets/confetti.dart';
 import 'widgets/contact_section.dart';
 import 'widgets/hero_section.dart';
@@ -46,6 +47,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   final _scrollController = ScrollController();
   final _project = ValueNotifier(0);
   final _workKey = GlobalKey();
+  final _careerKey = GlobalKey();
   final _skillsKey = GlobalKey();
   final _trophiesKey = GlobalKey();
   final _writingKey = GlobalKey();
@@ -82,6 +84,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
       'trophies' => _trophiesKey,
       'writing' => _writingKey,
       'skills' => _skillsKey,
+      'career' => _careerKey,
       'contact' => _contactKey,
       _ => null,
     };
@@ -175,6 +178,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
         onHome: _scrollToTop,
         links: [
           NavLink('Work', () => _scrollTo(_workKey)),
+          NavLink('Career', () => _scrollTo(_careerKey)),
           NavLink('Skills', () => _scrollTo(_skillsKey)),
           NavLink('Writing', () => _scrollTo(_writingKey)),
           NavLink('Contact', () => _scrollTo(_contactKey)),
@@ -197,6 +201,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                     key: _workKey,
                     child: WorkSection(selected: _project),
                   ),
+                  KeyedSubtree(key: _careerKey, child: const CareerSection()),
                   KeyedSubtree(key: _skillsKey, child: const SkillsSection()),
                   KeyedSubtree(
                     key: _trophiesKey,

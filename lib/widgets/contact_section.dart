@@ -33,7 +33,7 @@ class ContactSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionHeader(
-            index: '05',
+            index: '06',
             label: 'Contact',
             title: 'Let\'s talk',
             caption:

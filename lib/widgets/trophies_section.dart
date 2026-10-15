@@ -23,7 +23,7 @@ class TrophiesSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionHeader(
-            index: '03',
+            index: '04',
             label: 'Trophies',
             title: 'Achievements unlocked',
             caption:

@@ -111,7 +111,7 @@ class _WritingSectionState extends State<WritingSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SectionHeader(
-                index: '04',
+                index: '05',
                 label: 'Writing',
                 title: 'Notes from the desk',
                 caption:
