@@ -25,8 +25,9 @@ class SkillsSection extends StatelessWidget {
           label: 'Skills',
           title: 'Player profile',
           caption:
-              'Click the card to see the stats. They\'re self-rated, '
-              'so take them with a pinch of salt.',
+              'Click the card to see the stats. They\'re self-rated, so take '
+              'them with a pinch of salt. Honestly, I mostly wanted an excuse '
+              'to show off a subtle flip animation.',
         ),
         Reveal(
           child: Wrap(
