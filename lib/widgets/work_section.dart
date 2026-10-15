@@ -11,6 +11,7 @@ import 'demo_phone.dart';
 import 'responsive_section.dart';
 import 'reveal.dart';
 import 'section_header.dart';
+import 'shortcut_sheet.dart';
 
 /// Three projects, each paired with a live demo in a phone frame. The
 /// phone tilts toward the cursor, and switching projects slides the screen
@@ -115,16 +116,16 @@ class _ProjectList extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              const _KeyCap('←'),
+              const KeyCap('←', size: 11),
               const SizedBox(width: 4),
-              const _KeyCap('→'),
+              const KeyCap('→', size: 11),
               const SizedBox(width: 10),
               Text(
                 'switch project',
                 style: AppText.monoLabel.copyWith(fontSize: 11),
               ),
               const SizedBox(width: AppSpacing.md),
-              const _KeyCap('?'),
+              const KeyCap('?', size: 11),
               const SizedBox(width: 10),
               Text(
                 'all shortcuts',
@@ -134,35 +135,6 @@ class _ProjectList extends StatelessWidget {
           ),
         ],
       ],
-    );
-  }
-}
-
-class _KeyCap extends StatelessWidget {
-  final String label;
-
-  const _KeyCap(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minWidth: 24),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(5),
-        border: Border(
-          top: const BorderSide(color: AppColors.line),
-          left: const BorderSide(color: AppColors.line),
-          right: const BorderSide(color: AppColors.line),
-          bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.18),
-            width: 2,
-          ),
-        ),
-      ),
-      child: Text(label, style: AppText.mono.copyWith(fontSize: 11)),
     );
   }
 }

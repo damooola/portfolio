@@ -1,6 +1,7 @@
 // Smoke tests: the page builds without layout overflows at phone, tablet
 // and desktop widths, and scrolls all the way to the bottom.
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -20,6 +21,45 @@ void main() {
       await _scrollToBottom(tester);
     });
   }
+
+  testWidgets(
+    'keyboard: arrows switch projects, ? opens controls, konami fires',
+    (tester) async {
+      await _pumpAt(tester, const Size(1440, 900));
+
+      // Left from the first project wraps to the last one (the OTP demo).
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await _settle(tester);
+      expect(find.text('Verify your number'), findsOneWidget);
+
+      // Shift + / types "?".
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.slash, character: '?');
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.slash);
+      await _settle(tester);
+      expect(find.text('Controls'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await _settle(tester);
+      expect(find.text('Controls'), findsNothing);
+
+      for (final key in const [
+        LogicalKeyboardKey.arrowUp,
+        LogicalKeyboardKey.arrowUp,
+        LogicalKeyboardKey.arrowDown,
+        LogicalKeyboardKey.arrowDown,
+        LogicalKeyboardKey.arrowLeft,
+        LogicalKeyboardKey.arrowRight,
+        LogicalKeyboardKey.arrowLeft,
+        LogicalKeyboardKey.arrowRight,
+        LogicalKeyboardKey.keyB,
+        LogicalKeyboardKey.keyA,
+      ]) {
+        await tester.sendKeyEvent(key);
+      }
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.text('Blue is the colour'), findsOneWidget);
+      await _settle(tester); // let the confetti and toast clean up
+    },
+  );
 }
 
 Future<void> _pumpAt(WidgetTester tester, Size size) async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/sfx.dart';
 import '../theme/app_theme.dart';
 
 /// Shared hover/press feedback: a slight lift on hover, a squish on press.
@@ -36,7 +37,10 @@ class _PressableState extends State<Pressable> {
           onTapDown: (_) => setState(() => _down = true),
           onTapCancel: () => setState(() => _down = false),
           onTapUp: (_) => setState(() => _down = false),
-          onTap: widget.onTap,
+          onTap: () {
+            Sfx.play(Sound.click);
+            widget.onTap();
+          },
           child: AnimatedScale(
             scale: scale,
             duration: AppMotion.hover,

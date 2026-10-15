@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
+import '../services/sfx.dart';
 import '../theme/app_theme.dart';
 
 class NavLink {
@@ -156,6 +157,42 @@ class _NavTextState extends State<_NavText> {
               color: AppColors.blue,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Speaker toggle. Sound is off until the visitor turns it on.
+class SoundToggle extends StatelessWidget {
+  const SoundToggle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: Sfx.enabled,
+      builder: (context, on, _) => Tooltip(
+        message: on ? 'Sound on (S)' : 'Sound off (S)',
+        child: IconButton(
+          onPressed: Sfx.toggle,
+          visualDensity: VisualDensity.compact,
+          style: IconButton.styleFrom(
+            backgroundColor: on
+                ? AppColors.blue.withValues(alpha: 0.18)
+                : Colors.transparent,
+            side: const BorderSide(color: AppColors.line),
+          ),
+          icon: AnimatedSwitcher(
+            duration: AppMotion.hover,
+            transitionBuilder: (child, a) =>
+                ScaleTransition(scale: a, child: child),
+            child: Icon(
+              on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+              key: ValueKey(on),
+              size: 18,
+              color: on ? AppColors.blue : AppColors.textMuted,
+            ),
+          ),
         ),
       ),
     );

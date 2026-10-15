@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'services/sfx.dart';
 import 'theme/app_theme.dart';
+import 'widgets/confetti.dart';
 import 'widgets/contact_section.dart';
 import 'widgets/hero_section.dart';
 import 'widgets/nav_bar.dart';
 import 'widgets/scroll_meter.dart';
+import 'widgets/shortcut_sheet.dart';
 import 'widgets/skills_section.dart';
 import 'widgets/spotlight.dart';
+import 'widgets/toast.dart';
 import 'widgets/trophies_section.dart';
 import 'widgets/work_section.dart';
 import 'widgets/writing_section.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Sfx.init();
   runApp(const PortfolioApp());
 }
 
@@ -44,9 +51,25 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   final _writingKey = GlobalKey();
   final _contactKey = GlobalKey();
 
+  static const _konami = [
+    LogicalKeyboardKey.arrowUp,
+    LogicalKeyboardKey.arrowUp,
+    LogicalKeyboardKey.arrowDown,
+    LogicalKeyboardKey.arrowDown,
+    LogicalKeyboardKey.arrowLeft,
+    LogicalKeyboardKey.arrowRight,
+    LogicalKeyboardKey.arrowLeft,
+    LogicalKeyboardKey.arrowRight,
+    LogicalKeyboardKey.keyB,
+    LogicalKeyboardKey.keyA,
+  ];
+  int _konamiProgress = 0;
+  bool _sheetOpen = false;
+
   @override
   void initState() {
     super.initState();
+    HardwareKeyboard.instance.addHandler(_onKey);
     // Deep links: /#work, /#skills, /#contact jump straight to a section,
     // and /#work-2 opens the second project.
     final fragment = Uri.base.fragment.replaceAll('/', '');
@@ -70,8 +93,57 @@ class _PortfolioHomeState extends State<PortfolioHome> {
     }
   }
 
+  /// Page-wide keyboard play. Ignored while typing in a field (the OTP
+  /// demo), so digits and arrows still go where the visitor expects.
+  bool _onKey(KeyEvent event) {
+    if (event is! KeyDownEvent || !mounted) return false;
+    final typing =
+        FocusManager.instance.primaryFocus?.context
+            ?.findAncestorWidgetOfExactType<EditableText>() !=
+        null;
+    if (typing) return false;
+
+    final key = event.logicalKey;
+    _konamiProgress = key == _konami[_konamiProgress]
+        ? _konamiProgress + 1
+        : (key == _konami.first ? 1 : 0);
+    if (_konamiProgress == _konami.length) {
+      _konamiProgress = 0;
+      Sfx.play(Sound.ding);
+      showConfetti(context);
+      showToast(
+        context,
+        'Blue is the colour',
+        icon: Icons.sports_soccer,
+        color: AppColors.blue,
+      );
+      return true;
+    }
+    if (_sheetOpen) return false;
+
+    if (key == LogicalKeyboardKey.arrowRight) {
+      WorkSection.select(_project, _project.value + 1);
+    } else if (key == LogicalKeyboardKey.arrowLeft) {
+      WorkSection.select(_project, _project.value - 1);
+    } else if (key == LogicalKeyboardKey.enter) {
+      _scrollTo(_workKey);
+    } else if (key == LogicalKeyboardKey.keyE) {
+      ContactSection.email();
+    } else if (key == LogicalKeyboardKey.keyS) {
+      Sfx.toggle();
+    } else if (event.character == '?') {
+      _sheetOpen = true;
+      Sfx.play(Sound.chime);
+      showShortcutSheet(context).whenComplete(() => _sheetOpen = false);
+    } else {
+      return false;
+    }
+    return true;
+  }
+
   @override
   void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
     _scrollController.dispose();
     _project.dispose();
     super.dispose();
@@ -106,6 +178,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
           NavLink('Skills', () => _scrollTo(_skillsKey)),
           NavLink('Contact', () => _scrollTo(_contactKey)),
         ],
+        trailing: const [SoundToggle()],
       ),
       body: CursorSpotlight(
         child: Stack(
