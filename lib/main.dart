@@ -4,7 +4,9 @@ import 'widgets/contact_section.dart';
 import 'widgets/hero_section.dart';
 import 'widgets/nav_bar.dart';
 import 'widgets/scroll_meter.dart';
+import 'widgets/skills_section.dart';
 import 'widgets/spotlight.dart';
+import 'widgets/trophies_section.dart';
 import 'widgets/work_section.dart';
 
 void main() {
@@ -37,14 +39,22 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   final _project = ValueNotifier(0);
   final _workKey = GlobalKey();
   final _skillsKey = GlobalKey();
+  final _trophiesKey = GlobalKey();
   final _contactKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    // Deep links: /#work, /#skills, /#contact jump straight to a section.
-    final target = switch (Uri.base.fragment.replaceAll('/', '')) {
+    // Deep links: /#work, /#skills, /#contact jump straight to a section,
+    // and /#work-2 opens the second project.
+    final fragment = Uri.base.fragment.replaceAll('/', '');
+    final project = RegExp(r'^work-(\d)$').firstMatch(fragment);
+    if (project != null) {
+      _project.value = (int.parse(project.group(1)!) - 1).clamp(0, 2);
+    }
+    final target = switch (project != null ? 'work' : fragment) {
       'work' => _workKey,
+      'trophies' => _trophiesKey,
       'skills' => _skillsKey,
       'contact' => _contactKey,
       _ => null,
@@ -109,6 +119,11 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                   KeyedSubtree(
                     key: _workKey,
                     child: WorkSection(selected: _project),
+                  ),
+                  KeyedSubtree(key: _skillsKey, child: const SkillsSection()),
+                  KeyedSubtree(
+                    key: _trophiesKey,
+                    child: const TrophiesSection(),
                   ),
                   KeyedSubtree(key: _contactKey, child: const ContactSection()),
                 ],

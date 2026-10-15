@@ -8,8 +8,8 @@ import '../theme/app_theme.dart';
 /// Event marketplace map, rebuilt from scratch on mock data.
 ///
 /// Tap a vendor pin: the route draws from the client to the vendor, then a
-/// car drives it back while distance and ETA count down. Tiles come from
-/// OpenStreetMap via CARTO, so no Google Maps key is exposed on the web.
+/// car drives it back while distance and ETA count down. Tiles are Esri's
+/// keyless dark-gray basemap, tinted navy, so no API key ships to the web.
 class RouteMapDemo extends StatefulWidget {
   const RouteMapDemo({super.key});
 
@@ -33,29 +33,34 @@ class _Vendor {
 const _client = LatLng(6.4474, 3.4720); // Lekki Phase 1
 const _cityKmh = 22.0; // Lagos traffic, being generous
 
+/// Turns the gray basemap navy: roads stay light, land goes deep blue.
+const _navyTint = ColorFilter.matrix([
+  0.55, 0, 0, 0, 0, //
+  0, 0.65, 0, 0, 2, //
+  0, 0, 1.05, 0, 18, //
+  0, 0, 0, 1, 0, //
+]);
+
 const _vendors = [
   _Vendor('Bloom & Co.', 'Décor', Icons.local_florist_outlined, [
-    LatLng(6.4281, 3.4219),
-    LatLng(6.4318, 3.4310),
-    LatLng(6.4365, 3.4420),
-    LatLng(6.4395, 3.4510),
-    LatLng(6.4420, 3.4600),
-    LatLng(6.4460, 3.4650),
+    LatLng(6.4335, 3.4430),
+    LatLng(6.4370, 3.4500),
+    LatLng(6.4410, 3.4580),
+    LatLng(6.4440, 3.4650),
     _client,
   ]),
   _Vendor('Smoke & Spice', 'Catering', Icons.restaurant_outlined, [
-    LatLng(6.4410, 3.4980),
-    LatLng(6.4380, 3.4900),
-    LatLng(6.4365, 3.4820),
-    LatLng(6.4400, 3.4760),
+    LatLng(6.4420, 3.4930),
+    LatLng(6.4395, 3.4860),
+    LatLng(6.4400, 3.4790),
+    LatLng(6.4440, 3.4745),
     _client,
   ]),
   _Vendor('Frame Lagos', 'Photography', Icons.photo_camera_outlined, [
-    LatLng(6.4550, 3.4350),
-    LatLng(6.4530, 3.4400),
-    LatLng(6.4495, 3.4460),
-    LatLng(6.4470, 3.4530),
-    LatLng(6.4480, 3.4620),
+    LatLng(6.4560, 3.4500),
+    LatLng(6.4520, 3.4540),
+    LatLng(6.4490, 3.4600),
+    LatLng(6.4480, 3.4660),
     _client,
   ]),
 ];
@@ -160,11 +165,16 @@ class _RouteMapDemoState extends State<RouteMapDemo>
             final v = _vendor;
             return FlutterMap(
               mapController: _map,
-              options: const MapOptions(
-                initialCenter: LatLng(6.4420, 3.4600),
-                initialZoom: 13.2,
+              options: MapOptions(
+                initialCameraFit: CameraFit.bounds(
+                  bounds: LatLngBounds.fromPoints([
+                    _client,
+                    for (final v in _vendors) v.location,
+                  ]),
+                  padding: const EdgeInsets.fromLTRB(30, 100, 30, 60),
+                ),
                 backgroundColor: AppColors.night,
-                interactionOptions: InteractionOptions(
+                interactionOptions: const InteractionOptions(
                   flags:
                       InteractiveFlag.drag |
                       InteractiveFlag.pinchZoom |
@@ -174,10 +184,11 @@ class _RouteMapDemoState extends State<RouteMapDemo>
               children: [
                 TileLayer(
                   urlTemplate:
-                      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                  subdomains: const ['a', 'b', 'c', 'd'],
-                  retinaMode: RetinaMode.isHighDensity(context),
+                      'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+                  maxNativeZoom: 16,
                   userAgentPackageName: 'dev.damolanelson.portfolio',
+                  tileBuilder: (context, tile, _) =>
+                      ColorFiltered(colorFilter: _navyTint, child: tile),
                 ),
                 if (v != null)
                   PolylineLayer(
@@ -229,9 +240,18 @@ class _RouteMapDemoState extends State<RouteMapDemo>
                       ),
                   ],
                 ),
-                const SimpleAttributionWidget(
-                  source: Text('© OpenStreetMap © CARTO'),
-                  backgroundColor: Color(0xCC0A0F1E),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Text(
+                      '© Esri · OpenStreetMap contributors',
+                      style: AppText.mono.copyWith(
+                        fontSize: 8,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             );

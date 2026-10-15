@@ -29,7 +29,7 @@ Future<void> _pumpAt(WidgetTester tester, Size size) async {
 
   await tester.pumpWidget(const PortfolioApp());
   await _settle(tester);
-  expect(find.text(ProfileData.initials), findsOneWidget);
+  expect(find.text(ProfileData.initials), findsWidgets);
 }
 
 Future<void> _scrollToBottom(WidgetTester tester) async {

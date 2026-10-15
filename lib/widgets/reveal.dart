@@ -10,11 +10,17 @@ class Reveal extends StatefulWidget {
   final Duration delay;
   final double slide;
 
+  /// Slide in from the right instead of from below.
+  final bool sideways;
+  final VoidCallback? onReveal;
+
   const Reveal({
     super.key,
     required this.child,
     this.delay = Duration.zero,
     this.slide = 0.15,
+    this.sideways = false,
+    this.onReveal,
   });
 
   @override
@@ -33,6 +39,7 @@ class _RevealState extends State<Reveal> {
         onVisibilityChanged: (info) {
           if (info.visibleFraction > 0.1 && mounted && !_shown) {
             setState(() => _shown = true);
+            widget.onReveal?.call();
           }
         },
         child: Opacity(opacity: 0, child: widget.child),
@@ -42,6 +49,14 @@ class _RevealState extends State<Reveal> {
         .animate(delay: widget.delay)
         .fadeIn(duration: 400.ms, curve: AppMotion.settle);
     if (AppMotion.reduced(context)) return a;
+    if (widget.sideways) {
+      return a.slideX(
+        begin: widget.slide,
+        end: 0,
+        duration: AppMotion.big,
+        curve: AppMotion.spring,
+      );
+    }
     return a.slideY(
       begin: widget.slide,
       end: 0,

@@ -213,7 +213,7 @@ class _OtpDemoState extends State<OtpDemo> {
     if (_check == _Check.right) {
       // Tick green one box at a time.
       return box
-          .animate(key: const ValueKey('right'))
+          .animate(key: ValueKey('right-$i'))
           .scaleXY(begin: 1, end: 1.08, delay: (60 * i).ms, duration: 120.ms)
           .then()
           .scaleXY(begin: 1.08, end: 1, duration: 160.ms);
