@@ -25,9 +25,9 @@ class SectionHeader extends StatelessWidget {
         : AppBreakpoints.isDesktop(width)
             ? 128.0
             : 88.0;
-    final ink = onDark ? AppColors.cream : AppColors.ink;
-    final rule = onDark ? AppColors.cream.withValues(alpha: 0.25) : AppColors.hairline;
-    final accent = onDark ? AppColors.sage : AppColors.rose;
+    final ink = onDark ? AppColors.night : AppColors.text;
+    final rule = onDark ? AppColors.night.withValues(alpha: 0.25) : AppColors.line;
+    final accent = onDark ? AppColors.blue : AppColors.blue;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +63,7 @@ class SectionHeader extends StatelessWidget {
               caption!,
               style: AppText.body.copyWith(
                 fontSize: 17,
-                color: onDark ? AppColors.cream.withValues(alpha: 0.8) : AppColors.inkMuted,
+                color: onDark ? AppColors.night.withValues(alpha: 0.8) : AppColors.textMuted,
               ),
             ),
           ),

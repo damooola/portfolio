@@ -52,15 +52,15 @@ class _SkillGroupColumn extends StatelessWidget {
       children: [
         Text(
           group.label.toUpperCase(),
-          style: AppText.monoLabel.copyWith(color: AppColors.rose),
+          style: AppText.monoLabel.copyWith(color: AppColors.blue),
         ),
         const SizedBox(height: AppSpacing.sm),
-        Container(height: 1, color: AppColors.ink),
+        Container(height: 1, color: AppColors.text),
         for (final item in group.items)
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12),
             decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppColors.hairline)),
+              border: Border(bottom: BorderSide(color: AppColors.line)),
             ),
             child: Row(
               children: [
@@ -74,14 +74,14 @@ class _SkillGroupColumn extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppColors.sage.withValues(alpha: 0.3),
+                      color: AppColors.blue.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       'LEARNING',
                       style: AppText.monoLabel.copyWith(
                         fontSize: 10,
-                        color: AppColors.sageDeep,
+                        color: AppColors.blue,
                       ),
                     ),
                   ),

@@ -99,13 +99,13 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
           decoration: BoxDecoration(
-            color: _hover ? AppColors.ink : AppColors.sage,
+            color: _hover ? AppColors.text : AppColors.blue,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Text(
             widget.label,
             style: AppText.body.copyWith(
-              color: _hover ? AppColors.cream : AppColors.ink,
+              color: _hover ? AppColors.night : AppColors.text,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -141,7 +141,7 @@ class _SecondaryButtonState extends State<_SecondaryButton> {
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
           decoration: BoxDecoration(
             border: Border.all(
-              color: _hover ? AppColors.ink : AppColors.inkMuted,
+              color: _hover ? AppColors.text : AppColors.textMuted,
             ),
             borderRadius: BorderRadius.circular(999),
           ),

@@ -24,8 +24,8 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cream.withValues(alpha: 0.94),
-        border: const Border(bottom: BorderSide(color: AppColors.hairline)),
+        color: AppColors.night.withValues(alpha: 0.94),
+        border: const Border(bottom: BorderSide(color: AppColors.line)),
       ),
       padding: EdgeInsets.symmetric(horizontal: isMobile ? AppSpacing.sm : AppSpacing.xl),
       child: SafeArea(
@@ -80,7 +80,7 @@ class _NavLinkState extends State<_NavLink> {
         child: Text(
           widget.label,
           style: AppText.monoLabel.copyWith(
-            color: _hover ? AppColors.sageDeep : AppColors.ink,
+            color: _hover ? AppColors.blue : AppColors.text,
             fontWeight: FontWeight.w600,
           ),
         ),

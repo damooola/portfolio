@@ -43,11 +43,11 @@ class _IdentityCardState extends State<IdentityCard> {
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppColors.ink, AppColors.inkMuted, AppColors.rose],
+                colors: [AppColors.text, AppColors.textMuted, AppColors.blue],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.ink.withValues(alpha: 0.35),
+                  color: AppColors.text.withValues(alpha: 0.35),
                   blurRadius: 40,
                   offset: const Offset(0, 20),
                 ),
@@ -61,7 +61,7 @@ class _IdentityCardState extends State<IdentityCard> {
                     child: RepaintBoundary(
                       child: CustomPaint(
                         painter: GuillochePainter(
-                          color: AppColors.cream.withValues(alpha: 0.13),
+                          color: AppColors.night.withValues(alpha: 0.13),
                         ),
                       ),
                     ),
@@ -87,7 +87,7 @@ class _CardFace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cream = AppColors.cream;
+    final cream = AppColors.night;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +131,7 @@ class _CardFace extends StatelessWidget {
             Text(
               'FLUTTER',
               style: AppText.mono.copyWith(
-                color: AppColors.sage,
+                color: AppColors.blue,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
@@ -159,7 +159,7 @@ class _CardField extends StatelessWidget {
         Text(
           label,
           style: AppText.monoLabel.copyWith(
-            color: AppColors.cream.withValues(alpha: 0.55),
+            color: AppColors.night.withValues(alpha: 0.55),
             fontSize: 8,
           ),
         ),
@@ -168,7 +168,7 @@ class _CardField extends StatelessWidget {
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: AppText.mono.copyWith(color: AppColors.cream, fontSize: 12),
+          style: AppText.mono.copyWith(color: AppColors.night, fontSize: 12),
         ),
       ],
     );
@@ -186,7 +186,7 @@ class _Chip extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
         gradient: LinearGradient(
-          colors: [AppColors.sage, AppColors.sage.withValues(alpha: 0.7)],
+          colors: [AppColors.blue, AppColors.blue.withValues(alpha: 0.7)],
         ),
       ),
       child: CustomPaint(painter: _ChipLinesPainter()),
@@ -198,7 +198,7 @@ class _ChipLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.ink.withValues(alpha: 0.3)
+      ..color = AppColors.text.withValues(alpha: 0.3)
       ..strokeWidth = 1;
     final w = size.width, h = size.height;
     canvas.drawLine(Offset(0, h / 3), Offset(w * 0.35, h / 3), paint);

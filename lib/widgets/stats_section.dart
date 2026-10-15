@@ -52,9 +52,9 @@ class _StatTile extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 200),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.creamDeep.withValues(alpha: 0.6),
+        color: AppColors.surface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.hairline),
+        border: Border.all(color: AppColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,13 +96,13 @@ class _TrendBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.sage.withValues(alpha: 0.3),
+        color: AppColors.blue.withValues(alpha: 0.3),
         shape: BoxShape.circle,
       ),
       child: Icon(
         trend == StatTrend.up ? Icons.arrow_upward : Icons.arrow_downward,
         size: 14,
-        color: AppColors.sageDeep,
+        color: AppColors.blue,
       ),
     );
   }

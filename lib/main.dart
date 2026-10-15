@@ -59,10 +59,8 @@ class _PortfolioHomeState extends State<PortfolioHome> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = AppBreakpoints.isMobile(MediaQuery.of(context).size.width);
-
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: AppColors.night,
       appBar: NavBar(
         onAbout: () => _scrollTo(_aboutKey),
         onWork: () => _scrollTo(_workKey),
@@ -92,21 +90,6 @@ class _PortfolioHomeState extends State<PortfolioHome> {
             right: 0,
             child: ScrollProgressBar(controller: _scrollController),
           ),
-          // The ruler needs a side margin to live in, so phones get the
-          // compact percentage pill instead.
-          if (isMobile)
-            Positioned(
-              right: AppSpacing.sm,
-              bottom: AppSpacing.sm,
-              child: ScrollMeter(controller: _scrollController),
-            )
-          else
-            Positioned(
-              top: 0,
-              bottom: 0,
-              left: 0,
-              child: ScrollRuler(controller: _scrollController),
-            ),
         ],
       ),
     );

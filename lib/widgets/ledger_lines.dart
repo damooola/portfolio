@@ -5,7 +5,7 @@ import '../theme/app_theme.dart';
 class DashedDivider extends StatelessWidget {
   final Color color;
 
-  const DashedDivider({super.key, this.color = AppColors.hairline});
+  const DashedDivider({super.key, this.color = AppColors.line});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class DotLeaderRow extends StatelessWidget {
     required this.value,
     this.labelStyle,
     this.valueStyle,
-    this.dotColor = AppColors.hairline,
+    this.dotColor = AppColors.line,
   });
 
   @override

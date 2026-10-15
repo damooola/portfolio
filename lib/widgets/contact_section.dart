@@ -18,10 +18,10 @@ class ContactSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final faded = AppColors.cream.withValues(alpha: 0.5);
+    final faded = AppColors.night.withValues(alpha: 0.5);
 
     return ResponsiveSection(
-      background: AppColors.ink,
+      background: AppColors.text,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -106,12 +106,12 @@ class _ContactRowState extends State<_ContactRow> {
         child: DotLeaderRow(
           label: widget.label,
           value: widget.value,
-          labelStyle: AppText.monoLabel.copyWith(color: AppColors.sage),
-          dotColor: AppColors.cream.withValues(alpha: _hover ? 0.5 : 0.2),
+          labelStyle: AppText.monoLabel.copyWith(color: AppColors.blue),
+          dotColor: AppColors.night.withValues(alpha: _hover ? 0.5 : 0.2),
           valueStyle: AppText.body.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: _hover ? AppColors.sage : AppColors.cream,
+            color: _hover ? AppColors.blue : AppColors.night,
           ),
         ),
       ),

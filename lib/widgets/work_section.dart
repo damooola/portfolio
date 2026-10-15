@@ -15,7 +15,7 @@ class WorkSection extends StatelessWidget {
     final projects = ProjectsData.projects;
 
     return ResponsiveSection(
-      background: AppColors.creamDeep,
+      background: AppColors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -79,11 +79,11 @@ class _ReceiptState extends State<_Receipt> {
         curve: Curves.easeOutCubic,
         transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
         decoration: ShapeDecoration(
-          color: AppColors.cream,
+          color: AppColors.night,
           shape: const ReceiptBorder(),
           shadows: [
             BoxShadow(
-              color: AppColors.ink.withValues(alpha: _hover ? 0.16 : 0.08),
+              color: AppColors.text.withValues(alpha: _hover ? 0.16 : 0.08),
               blurRadius: _hover ? 32 : 16,
               offset: Offset(0, _hover ? 16 : 6),
             ),
@@ -100,10 +100,10 @@ class _ReceiptState extends State<_Receipt> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.sage.withValues(alpha: 0.3),
+                      color: AppColors.blue.withValues(alpha: 0.3),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(project.icon, size: 18, color: AppColors.ink),
+                    child: Icon(project.icon, size: 18, color: AppColors.text),
                   ),
                   const SizedBox(width: 12),
                   Text(txn, style: AppText.monoLabel),
@@ -134,7 +134,7 @@ class _ReceiptState extends State<_Receipt> {
                           padding: const EdgeInsets.only(top: 3),
                           child: Text(
                             (i + 1).toString().padLeft(2, '0'),
-                            style: AppText.mono.copyWith(fontSize: 13, color: AppColors.rose),
+                            style: AppText.mono.copyWith(fontSize: 13, color: AppColors.blue),
                           ),
                         ),
                       ),
@@ -159,7 +159,7 @@ class _ReceiptState extends State<_Receipt> {
                   valueStyle: AppText.body.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.sageDeep,
+                    color: AppColors.blue,
                   ),
                 ),
               const SizedBox(height: AppSpacing.md),
@@ -228,7 +228,7 @@ class _BarcodePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = AppColors.ink.withValues(alpha: 0.75);
+    final paint = Paint()..color = AppColors.text.withValues(alpha: 0.75);
     final codes = seed.codeUnits;
     var x = 0.0;
     var i = 0;
