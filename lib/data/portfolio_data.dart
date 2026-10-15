@@ -46,10 +46,31 @@ class NowPlayingData {
   /// TheSportsDB team id for Chelsea: last result and next fixture, live.
   static const chelseaTeamId = '133610';
 
-  static const learning = 'Go, deeper every week';
-  static const learningDetail =
+  /// Short line on the tile.
+  static const learning = 'Golang · ISO 27001';
+
+  /// Shown in the panel: (badge, title, detail).
+  static const learningItems = <(String, String, String)>[
+    (
+      'Go',
+      'Golang',
       'I already ship Go on the backend at NeoCash, and I\'m still levelling '
-      'up: the server side of the same APIs my Flutter apps talk to.';
+          'up on the server side of the APIs my Flutter apps talk to.',
+    ),
+    (
+      'ISO',
+      'ISO/IEC 27001',
+      'How an information security management system works: risk '
+          'assessment, controls, and keeping evidence of both.',
+    ),
+    (
+      'KEY',
+      'Encryption, compliance & security',
+      'Encryption at rest and in transit, key management, and the compliance '
+          'frameworks fintech apps have to answer to.',
+    ),
+  ];
+
   static const learningUrl = 'https://github.com/damooola';
 }
 

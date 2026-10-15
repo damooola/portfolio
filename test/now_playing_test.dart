@@ -122,10 +122,10 @@ void main() {
     );
 
     for (final (i, label) in const [
+      'LEARNING',
       'CHESS.COM',
       'SPOTIFY',
       'CHELSEA',
-      'LEARNING',
     ].indexed) {
       await mouse.moveTo(tester.getCenter(find.text(label)));
       // One frame to start the glide, then let it finish.

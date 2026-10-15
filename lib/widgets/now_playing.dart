@@ -9,9 +9,9 @@ import '../services/sfx.dart';
 import '../theme/app_theme.dart';
 import 'chess_board.dart';
 
-enum NowPanel { chess, music, chelsea, learning }
+enum NowPanel { learning, chess, music, chelsea }
 
-/// Four "now playing" tiles: chess, music, Chelsea, learning. Hovering a
+/// Four "now playing" tiles: learning, chess, music, Chelsea. Hovering a
 /// tile previews its panel underneath; clicking pins it open (on touch
 /// screens, tap toggles). Music keeps playing while you look around.
 class NowPlayingStrip extends StatefulWidget {
@@ -257,7 +257,7 @@ class _NowTileState extends State<_NowTile> {
     NowPanel.chess => 'MY LAST WIN',
     NowPanel.music => 'PLAY THE PLAYLIST',
     NowPanel.chelsea => 'SCORE + NEXT GAME',
-    NowPanel.learning => 'WHAT I\'M BUILDING',
+    NowPanel.learning => 'WHAT I\'M STUDYING',
   };
 
   Widget get _glyph => switch (widget.panel) {
@@ -1166,46 +1166,62 @@ class _LearningPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return _PanelCard(
       maxWidth: 560,
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.blueDeep,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text('Go', style: AppText.display.copyWith(fontSize: 18)),
+          Text(
+            'CURRENTLY LEARNING',
+            style: AppText.monoLabel.copyWith(fontSize: 10),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'CURRENTLY LEARNING',
-                  style: AppText.monoLabel.copyWith(fontSize: 10),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  NowPlayingData.learning,
-                  style: AppText.heading.copyWith(fontSize: 18),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  NowPlayingData.learningDetail,
-                  style: AppText.bodyMuted.copyWith(fontSize: 14, height: 1.5),
-                ),
-                const SizedBox(height: 12),
-                const _PanelLink(
-                  label: 'Follow along on GitHub',
-                  url: NowPlayingData.learningUrl,
-                ),
-              ],
+          const SizedBox(height: 10),
+          for (final (badge, title, detail) in NowPlayingData.learningItems)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.blueDeep,
+                      borderRadius: BorderRadius.circular(11),
+                    ),
+                    child: Text(
+                      badge,
+                      style: AppText.display.copyWith(
+                        fontSize: badge.length > 2 ? 12 : 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: AppText.heading.copyWith(fontSize: 16),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          detail,
+                          style: AppText.bodyMuted.copyWith(
+                            fontSize: 13,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
+          const _PanelLink(
+            label: 'Follow along on GitHub',
+            url: NowPlayingData.learningUrl,
           ),
         ],
       ),
