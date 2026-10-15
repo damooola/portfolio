@@ -56,6 +56,73 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
     });
   }
 
+  /// Centres the panel under its tile. Near the edges it slides inward to
+  /// stay on the page, but the caret keeps pointing at the tile. On phones
+  /// (2x2 grid) the panel spans the full width.
+  Widget _anchoredPanel(
+    NowPanel panel, {
+    required double width,
+    required int columns,
+    required double tileWidth,
+    required double gap,
+  }) {
+    final column = panel.index % columns;
+    final tileCentre = column * (tileWidth + gap) + tileWidth / 2;
+    final panelWidth = columns == 4
+        ? _panelWidth(panel).clamp(0.0, width)
+        : width;
+    final left = (tileCentre - panelWidth / 2).clamp(0.0, width - panelWidth);
+    final caretLeft = (tileCentre - left - _caretSize.width / 2).clamp(
+      16.0,
+      panelWidth - 16 - _caretSize.width,
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(top: gap + _caretSize.height - 1),
+      child: AnimatedPadding(
+        duration: AppMotion.big,
+        curve: AppMotion.settle,
+        padding: EdgeInsets.only(left: left),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: AnimatedContainer(
+            duration: AppMotion.big,
+            curve: AppMotion.settle,
+            width: panelWidth,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                AnimatedSwitcher(
+                  duration: AppMotion.hover,
+                  layoutBuilder: (current, previous) => Stack(
+                    alignment: Alignment.topLeft,
+                    children: [...previous, ?current],
+                  ),
+                  child: KeyedSubtree(
+                    key: ValueKey(panel),
+                    child: switch (panel) {
+                      NowPanel.chess => const _LastWinPanel(),
+                      NowPanel.music => _PlaylistPanel(music: _music),
+                      NowPanel.chelsea => const _MatchPanel(),
+                      NowPanel.learning => const _LearningPanel(),
+                    },
+                  ),
+                ),
+                AnimatedPositioned(
+                  duration: AppMotion.big,
+                  curve: AppMotion.settle,
+                  top: -_caretSize.height + 1,
+                  left: caretLeft,
+                  child: const CustomPaint(size: _caretSize, painter: _Caret()),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const gap = 10.0;
@@ -109,24 +176,12 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
                 alignment: Alignment.topLeft,
                 child: _shown == null
                     ? const SizedBox(width: double.infinity)
-                    : Padding(
-                        padding: const EdgeInsets.only(top: gap),
-                        child: AnimatedSwitcher(
-                          duration: AppMotion.hover,
-                          layoutBuilder: (current, previous) => Stack(
-                            alignment: Alignment.topLeft,
-                            children: [...previous, ?current],
-                          ),
-                          child: KeyedSubtree(
-                            key: ValueKey(_shown),
-                            child: switch (_shown!) {
-                              NowPanel.chess => const _LastWinPanel(),
-                              NowPanel.music => _PlaylistPanel(music: _music),
-                              NowPanel.chelsea => const _MatchPanel(),
-                              NowPanel.learning => const _LearningPanel(),
-                            },
-                          ),
-                        ),
+                    : _anchoredPanel(
+                        _shown!,
+                        width: constraints.maxWidth,
+                        columns: columns,
+                        tileWidth: tileWidth,
+                        gap: gap,
                       ),
               ),
             ],
@@ -135,6 +190,41 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
       ),
     );
   }
+}
+
+// ── Panel placement ──
+
+/// Natural width of each panel; wider than a tile, so it overhangs evenly.
+double _panelWidth(NowPanel panel) => switch (panel) {
+  NowPanel.music => 640,
+  _ => 560,
+};
+
+const _caretSize = Size(18, 9);
+
+/// Little arrow on top of the panel pointing at its tile.
+class _Caret extends CustomPainter {
+  const _Caret();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(size.width / 2, 0)
+      ..lineTo(size.width, size.height);
+    canvas
+      ..drawPath(path, Paint()..color = AppColors.surface)
+      ..drawPath(
+        path,
+        Paint()
+          ..color = AppColors.line
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1,
+      );
+  }
+
+  @override
+  bool shouldRepaint(_Caret oldDelegate) => false;
 }
 
 // ── Tiles ──────────────────────────────────────────────────────────────
@@ -1158,15 +1248,19 @@ class _Scoreline extends StatelessWidget {
       _ => const Color(0xFFFF5A5F),
     };
 
+    // Long names ("Bournemouth", "Nottingham Forest") shrink to fit rather
+    // than getting cut off on phones.
     Widget team(String name, {required bool end}) => Expanded(
-      child: Text(
-        name,
-        textAlign: end ? TextAlign.end : TextAlign.start,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: AppText.heading.copyWith(
-          fontSize: 17,
-          color: name == Football.team ? AppColors.text : AppColors.textMuted,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: end ? Alignment.centerRight : Alignment.centerLeft,
+        child: Text(
+          name,
+          maxLines: 1,
+          style: AppText.heading.copyWith(
+            fontSize: 17,
+            color: name == Football.team ? AppColors.text : AppColors.textMuted,
+          ),
         ),
       ),
     );
