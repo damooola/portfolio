@@ -4,6 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../data/portfolio_data.dart';
 import '../demos/offline_sync_demo.dart';
 import '../demos/otp_demo.dart';
+import '../demos/chat_demo.dart';
+import '../demos/planner_demo.dart';
 import '../demos/route_map_demo.dart';
 import '../services/sfx.dart';
 import '../theme/app_theme.dart';
@@ -308,26 +310,53 @@ class _Tag extends StatelessWidget {
 }
 
 /// The phone, plus the two lines under it.
-class _PhoneColumn extends StatelessWidget {
+class _PhoneColumn extends StatefulWidget {
   final int index;
   final Project project;
 
   const _PhoneColumn({required this.index, required this.project});
 
   @override
+  State<_PhoneColumn> createState() => _PhoneColumnState();
+}
+
+class _PhoneColumnState extends State<_PhoneColumn> {
+  /// Which of the project's demos is on screen.
+  int _demo = 0;
+
+  @override
+  void didUpdateWidget(_PhoneColumn old) {
+    super.didUpdateWidget(old);
+    if (old.index != widget.index) _demo = 0;
+  }
+
+  void _pick(int i) {
+    if (i == _demo) return;
+    Sfx.play(Sound.chime);
+    setState(() => _demo = i);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final index = widget.index;
+    final project = widget.project;
     final isMobile = AppBreakpoints.isMobile(MediaQuery.sizeOf(context).width);
-    final demo = switch (project.demo) {
+    final kind = project.demos[_demo.clamp(0, project.demos.length - 1)];
+    final demo = switch (kind) {
       DemoKind.offlineSync => const OfflineSyncDemo(),
+      DemoKind.planner => const PlannerDemo(),
+      DemoKind.chat => const ChatDemo(),
       DemoKind.routeMap => const RouteMapDemo(),
       DemoKind.otp => const OtpDemo(),
     };
+    // One number per screen so the app switcher knows which way to slide.
+    final screen = index * 10 + _demo;
 
     final phone = DemoPhone(
-      screenId: index,
+      screenId: screen,
       child: _AppSwitcher(
-        index: index,
-        child: KeyedSubtree(key: ValueKey(index), child: demo),
+        index: screen,
+        child: KeyedSubtree(key: ValueKey(screen), child: demo),
       ),
     );
 
@@ -336,6 +365,10 @@ class _PhoneColumn extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (project.demos.length > 1) ...[
+            _DemoTabs(demos: project.demos, selected: _demo, onPick: _pick),
+            const SizedBox(height: AppSpacing.sm),
+          ],
           if (isMobile) phone else Center(child: _TiltOnHover(child: phone)),
           const SizedBox(height: AppSpacing.md),
           AnimatedSwitcher(
@@ -365,6 +398,100 @@ class _PhoneColumn extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Picks between a project's live demos.
+class _DemoTabs extends StatelessWidget {
+  final List<DemoKind> demos;
+  final int selected;
+  final ValueChanged<int> onPick;
+
+  const _DemoTabs({
+    required this.demos,
+    required this.selected,
+    required this.onPick,
+  });
+
+  static IconData _icon(DemoKind kind) => switch (kind) {
+    DemoKind.planner => Icons.calendar_view_day_outlined,
+    DemoKind.chat => Icons.chat_bubble_outline,
+    DemoKind.routeMap => Icons.map_outlined,
+    DemoKind.offlineSync => Icons.sync,
+    DemoKind.otp => Icons.pin_outlined,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: AppColors.line),
+            ),
+            child: Row(
+              children: [
+                for (final (i, kind) in demos.indexed)
+                  Expanded(
+                    child: Semantics(
+                      button: true,
+                      selected: i == selected,
+                      label: '${kind.label} demo',
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () => onPick(i),
+                          child: AnimatedContainer(
+                            duration: AppMotion.hover,
+                            padding: const EdgeInsets.symmetric(vertical: 7),
+                            decoration: BoxDecoration(
+                              color: i == selected
+                                  ? AppColors.blue
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            // Shrinks rather than overflowing on narrow phones.
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _icon(kind),
+                                    size: 14,
+                                    color: i == selected
+                                        ? Colors.white
+                                        : AppColors.textMuted,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    kind.label,
+                                    style: AppText.body.copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: i == selected
+                                          ? Colors.white
+                                          : AppColors.textMuted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

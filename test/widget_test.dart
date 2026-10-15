@@ -22,6 +22,30 @@ void main() {
     });
   }
 
+  testWidgets('every project and demo tab renders without layout errors', (
+    tester,
+  ) async {
+    await _pumpAt(tester, const Size(1440, 1050));
+    await tester.tap(find.text('Work').first);
+    await _settle(tester);
+
+    for (final project in const [
+      'Offline-first field app',
+      'Event marketplace',
+      'OTP boxes, done properly',
+    ]) {
+      await tester.tap(find.text(project));
+      await _settle(tester);
+    }
+    // The marketplace has several demos; the map needs real tiles, so skip it.
+    await tester.tap(find.text('Event marketplace'));
+    await _settle(tester);
+    for (final tab in const ['Chat', 'Calendar']) {
+      await tester.tap(find.text(tab));
+      await _settle(tester);
+    }
+  });
+
   testWidgets('nav links land on sections and reveal them', (tester) async {
     await _pumpAt(tester, const Size(1440, 1500));
     for (final (link, title) in const [

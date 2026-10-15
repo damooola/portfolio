@@ -13,7 +13,7 @@ class ProfileData {
   static const initials = 'DN';
   static const title = 'Flutter Mobile Engineer';
   static const role = 'Flutter mobile engineer in Lagos.';
-  static const status = 'Open to senior Flutter roles · contract · remote';
+  static const status = 'Open to senior Flutter roles · full time · contract · remote';
 
   /// From my LinkedIn summary.
   static const tagline =
@@ -52,7 +52,16 @@ class NowPlayingData {
   static const learningUrl = 'https://github.com/damooola';
 }
 
-enum DemoKind { offlineSync, routeMap, otp }
+enum DemoKind {
+  offlineSync('Field app'),
+  planner('Calendar'),
+  chat('Chat'),
+  routeMap('Map'),
+  otp('OTP');
+
+  const DemoKind(this.label);
+  final String label;
+}
 
 class Project {
   final String name;
@@ -60,7 +69,10 @@ class Project {
   final String period;
   final String summary;
   final List<String> tags;
-  final DemoKind demo;
+
+  /// Live demos in the phone, first one shown by default. More than one
+  /// gets a switcher above the phone.
+  final List<DemoKind> demos;
 
   /// Line under the phone: what was built for real.
   final String builtForReal;
@@ -76,7 +88,7 @@ class Project {
     required this.period,
     required this.summary,
     required this.tags,
-    required this.demo,
+    required this.demos,
     required this.builtForReal,
     required this.result,
     this.linkLabel,
@@ -95,7 +107,7 @@ class ProjectsData {
           'A field agent app that keeps working on a bad network and keeps '
           'data safe on a lost phone.',
       tags: ['Flutter', 'Riverpod', 'Go', 'SQLCipher', 'CI/CD'],
-      demo: DemoKind.offlineSync,
+      demos: [DemoKind.offlineSync],
       builtForReal:
           'Built for real: main contributor (360 of 448 commits) to a field app '
           'whose outbox syncs with ordering, retries and idempotency keys, over '
@@ -112,7 +124,7 @@ class ProjectsData {
           'A two-sided marketplace connecting event planners with vendors. '
           'I was the only mobile engineer, end to end.',
       tags: ['Flutter', 'BLoC', 'Socket.IO', 'Firebase', 'GetIt'],
-      demo: DemoKind.routeMap,
+      demos: [DemoKind.planner, DemoKind.chat, DemoKind.routeMap],
       builtForReal:
           'Built for real: Socket.IO chat with an offline queue and voice notes, '
           'a calendar built from scratch, co-planning roles, escrow bookings, '
@@ -129,7 +141,7 @@ class ProjectsData {
           'Six little boxes that every app gets slightly wrong: focus, paste, '
           'backspace, autofill. I wrote up how to get them right.',
       tags: ['Flutter', 'Forms', 'Accessibility', 'UX detail'],
-      demo: DemoKind.otp,
+      demos: [DemoKind.otp],
       builtForReal:
           'Built for real: one hidden field driving six boxes, so paste, '
           'SMS autofill and backspace behave like any normal input.',
