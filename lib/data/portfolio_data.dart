@@ -13,7 +13,7 @@ class ProfileData {
   static const initials = 'DN';
   static const title = 'Flutter Mobile Engineer';
   static const role = 'Flutter mobile engineer in Lagos.';
-  static const status = 'Open to senior Flutter roles · full time · contract · remote';
+  static const status = 'Open to Flutter Dev roles · full time · contract · remote';
 
   /// From my LinkedIn summary.
   static const tagline =
