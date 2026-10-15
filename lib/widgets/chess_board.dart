@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_theme.dart';
 
-/// Draws a chess position from FEN. No images: pieces are the solid Unicode
-/// glyphs, filled white or black and outlined so both read on either square.
+/// Draws a chess position from FEN, with the classic "cburnett" vector
+/// pieces (assets/chess/, CC BY-SA 3.0, see CREDITS.md). Vector pieces sit
+/// exactly in the middle of each square, unlike font glyphs.
 class ChessBoard extends StatelessWidget {
   final String fen;
   final double size;
@@ -19,14 +21,12 @@ class ChessBoard extends StatelessWidget {
 
   static const _light = Color(0xFFB9C6EA);
   static const _dark = Color(0xFF3A57A8);
-  static const _glyphs = {
-    'k': '♚',
-    'q': '♛',
-    'r': '♜',
-    'b': '♝',
-    'n': '♞',
-    'p': '♟',
-  };
+
+  /// FEN letter to asset: uppercase is white, lowercase is black.
+  static String _asset(String piece) {
+    final colour = piece == piece.toUpperCase() ? 'w' : 'b';
+    return 'assets/chess/$colour${piece.toUpperCase()}.svg';
+  }
 
   /// Board rows from FEN, rank 8 first; each row has 8 entries, null = empty.
   static List<List<String?>> parse(String fen) {
@@ -56,7 +56,6 @@ class ChessBoard extends StatelessWidget {
           ? board[br][bc]
           : null;
       final light = (br + bc).isEven;
-      final isWhite = piece != null && piece == piece.toUpperCase();
       final labelColor = light ? _dark : _light;
 
       return Container(
@@ -91,27 +90,10 @@ class ChessBoard extends StatelessWidget {
               ),
             if (piece != null)
               Center(
-                child: Text(
-                  _glyphs[piece.toLowerCase()] ?? '',
-                  style: TextStyle(
-                    fontSize: square * 0.95,
-                    height: 1,
-                    color: isWhite ? Colors.white : const Color(0xFF0A0F1E),
-                    shadows: [
-                      for (final o in const [
-                        Offset(1, 0),
-                        Offset(-1, 0),
-                        Offset(0, 1),
-                        Offset(0, -1),
-                      ])
-                        Shadow(
-                          offset: o * (square / 40),
-                          color: isWhite
-                              ? const Color(0xFF0A0F1E)
-                              : Colors.white.withValues(alpha: 0.85),
-                        ),
-                    ],
-                  ),
+                child: SvgPicture.asset(
+                  _asset(piece),
+                  width: square * 0.88,
+                  height: square * 0.88,
                 ),
               ),
           ],

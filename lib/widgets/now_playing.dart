@@ -680,6 +680,15 @@ class _LastWinPanel extends StatelessWidget {
                 const _PanelLink(label: 'Profile', url: profile),
               ],
             ),
+            const SizedBox(height: 10),
+            // Required by the pieces' CC BY-SA 3.0 licence.
+            Text(
+              'Pieces by Cburnett · CC BY-SA 3.0',
+              style: AppText.mono.copyWith(
+                fontSize: 9,
+                color: AppColors.textMuted.withValues(alpha: 0.7),
+              ),
+            ),
           ],
         );
         final board = ChessBoard(

@@ -120,6 +120,10 @@ flutter analyze
 flutter test
 ```
 
+## Credits
+
+- Chess pieces by Colin M.L. Burnett (Cburnett), [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), from Wikimedia Commons. See `assets/chess/CREDITS.md`.
+
 ## Contact
 
 - GitHub: [@damooola](https://github.com/damooola)
