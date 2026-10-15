@@ -31,6 +31,23 @@ class PortfolioApp extends StatelessWidget {
       title: 'Damola Nelson — Flutter Engineer',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
+      // This is a website: arrows scroll, like Flutter's web defaults, rather
+      // than hopping focus between widgets. Spelled out so tests and desktop
+      // builds behave like the real site.
+      shortcuts: {
+        ...WidgetsApp.defaultShortcuts,
+        const SingleActivator(LogicalKeyboardKey.arrowUp): const ScrollIntent(
+          direction: AxisDirection.up,
+        ),
+        const SingleActivator(LogicalKeyboardKey.arrowDown): const ScrollIntent(
+          direction: AxisDirection.down,
+        ),
+        const SingleActivator(LogicalKeyboardKey.arrowLeft): const ScrollIntent(
+          direction: AxisDirection.left,
+        ),
+        const SingleActivator(LogicalKeyboardKey.arrowRight):
+            const ScrollIntent(direction: AxisDirection.right),
+      },
       home: const PortfolioHome(),
     );
   }

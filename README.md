@@ -9,19 +9,28 @@ The concept is **After Hours**: a dark navy room, a soft blue glow that follows 
 | Section | What it does |
 | --- | --- |
 | Hero | The name drops in letter by letter, plus a status pill and four "now playing" tiles: live Chess.com rating with my last win on a board, my playlist in a custom preview player, Chelsea's live score and next game, and what I'm learning. Hover to preview, click to pin |
-| 01 Work | Three projects, each with a live demo in a phone that tilts toward the cursor |
-| 02 Skills | A football-game player card that flips to show the attribute bars |
-| 03 Trophies | Resume stats shown as console-style achievements |
-| 04 Writing | A draggable row of Flutter articles from Hashnode and Coder Legion, plus three personal Medium essays shown on phones |
-| 05 Contact | Click to copy my email, or press **E** |
+| 01 Work | Three projects with live demos in a phone that tilts toward the cursor |
+| 02 Career | Work history, newest first |
+| 03 Skills | A football-game player card that flips to show the attribute bars |
+| 04 Trophies | Resume stats shown as console-style achievements |
+| 05 Writing | A draggable row of Flutter articles from Hashnode and Coder Legion, plus three personal Medium essays shown on phones |
+| 06 Contact | Click to copy my email, or press **E** |
 
 ## Live demos
 
-All demos run on mock data and were rebuilt from scratch. None of them use employer code.
+The real apps belong to the companies I built them for, so every demo is a small working version rebuilt from scratch on mock data.
 
-- **Offline sync**: toggle airplane mode and add customers. Rows queue in an outbox, then sync one at a time with a simulated failure and retry.
-- **Map and live route**: tap a vendor pin to draw the route and watch the car drive it while distance and ETA count down.
-- **OTP boxes**: type, paste or backspace a 6-digit code. Focus moves correctly, a wrong code shakes and the right one ticks green.
+**NeoCash loan apps**
+- **Loan fix**: a declined application with three reasons to fix (verify a guarantor by OTP, add collateral, lower the amount). Fixed items collapse into "resolved", then you can resubmit.
+- **Face check**: guided face capture. Steer a drawn face with the pointer; each step checks its target angle while capping the others, so a head tilt can't pass for a turn.
+- **Field app**: toggle airplane mode and add customers. Rows queue in an outbox, then sync one at a time with a simulated failure and retry.
+
+**Event marketplace (Ajarra)**
+- **Calendar**: a day view where overlapping tasks split into columns, with a live "now" line and Creator / Co-planner / Viewer permissions.
+- **Chat**: messages queue while offline, then send in order after reconnecting, with sent and read ticks, a flaky-server mode with tap-to-retry, and voice notes.
+- **Map**: tap a vendor pin to draw the route and watch the car drive it while distance and ETA count down.
+
+**OTP boxes**: type, paste or backspace a 6-digit code. Focus moves correctly, a wrong code shakes and the right one ticks green.
 
 ## Toys
 

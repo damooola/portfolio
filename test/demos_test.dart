@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio/demos/offline_sync_demo.dart';
 import 'package:portfolio/demos/otp_demo.dart';
 import 'package:portfolio/demos/chat_demo.dart';
+import 'package:portfolio/demos/face_check_demo.dart';
+import 'package:portfolio/demos/loan_fix_demo.dart';
 import 'package:portfolio/demos/planner_demo.dart';
 
 Future<void> _pumpDemo(WidgetTester tester, Widget demo) async {
@@ -156,5 +158,48 @@ void main() {
       find.text("Yes, 200 is fine. I'll bring extra centrepieces."),
       findsOneWidget,
     );
+  });
+
+  test('face check: a tilt or a nod never passes for a turn', () {
+    expect(facePasses(FaceStep.left, const FacePose(yaw: 30)), isTrue);
+    expect(
+      facePasses(FaceStep.left, const FacePose(yaw: 30, roll: 25)),
+      isFalse,
+    );
+    expect(
+      facePasses(FaceStep.left, const FacePose(yaw: 30, pitch: 20)),
+      isFalse,
+    );
+    expect(facePasses(FaceStep.left, const FacePose(yaw: 60)), isFalse);
+    expect(facePasses(FaceStep.right, const FacePose(yaw: -30)), isTrue);
+    expect(
+      facePasses(FaceStep.straight, const FacePose(yaw: 3, pitch: -4)),
+      isTrue,
+    );
+    expect(facePasses(FaceStep.straight, const FacePose(smile: 0.9)), isFalse);
+    expect(facePasses(FaceStep.smile, const FacePose(smile: 0.9)), isTrue);
+    expect(
+      facePasses(FaceStep.smile, const FacePose(smile: 0.9, yaw: 30)),
+      isFalse,
+    );
+  });
+
+  testWidgets('loan fix: resubmit unlocks only after every reason is fixed', (
+    tester,
+  ) async {
+    await _pumpDemo(tester, const LoanFixDemo());
+    expect(find.text('Declined: 3 things to fix'), findsOneWidget);
+    expect(find.text('Fix 3 more to resubmit'), findsOneWidget);
+
+    // Guarantor contact: send the code, then key it in.
+    await tester.tap(find.text('Send code'));
+    await _advance(tester, const Duration(milliseconds: 300));
+    for (final d in const ['2', '4', '6', '8']) {
+      await tester.tap(find.text(d).last);
+      await tester.pump();
+    }
+    await _advance(tester, const Duration(milliseconds: 600));
+    expect(find.text('Declined: 2 things to fix'), findsOneWidget);
+    expect(find.text('RESOLVED'), findsOneWidget);
   });
 }

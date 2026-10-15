@@ -30,14 +30,22 @@ void main() {
     await _settle(tester);
 
     for (final project in const [
-      'Offline-first field app',
+      'NeoCash loan apps',
       'Event marketplace',
       'OTP boxes, done properly',
     ]) {
       await tester.tap(find.text(project));
       await _settle(tester);
     }
-    // The marketplace has several demos; the map needs real tiles, so skip it.
+    // Projects with several demos: visit every tab except the map, which
+    // needs real tiles.
+    await tester.tap(find.text('NeoCash loan apps'));
+    await _settle(tester);
+    for (final tab in const ['Face check', 'Field app', 'Loan fix']) {
+      await tester.tap(find.text(tab));
+      await _settle(tester);
+    }
+
     await tester.tap(find.text('Event marketplace'));
     await _settle(tester);
     for (final tab in const ['Chat', 'Calendar']) {

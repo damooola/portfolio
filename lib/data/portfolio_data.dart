@@ -54,6 +54,8 @@ class NowPlayingData {
 }
 
 enum DemoKind {
+  loanFix('Loan fix'),
+  faceCheck('Face check'),
   offlineSync('Field app'),
   planner('Calendar'),
   chat('Chat'),
@@ -101,21 +103,23 @@ class Project {
 class ProjectsData {
   static const projects = <Project>[
     Project(
-      name: 'Offline-first field app',
-      org: 'Neocash',
-      period: 'NOW',
+      name: 'NeoCash loan apps',
+      org: 'NeoCash',
+      period: '2026 — NOW',
       summary:
-          'A field agent app that keeps working on a bad network and keeps '
-          'data safe on a lost phone.',
-      tags: ['Flutter', 'Riverpod', 'Go', 'SQLCipher', 'CI/CD'],
-      demos: [DemoKind.offlineSync],
+          'The customer loan app on Google Play and the App Store, and the '
+          'field-agent app that onboards customers with no signal. I work '
+          'across both, plus the Go backend.',
+      tags: ['Flutter', 'Riverpod', 'Go', 'ML Kit', 'Drift'],
+      demos: [DemoKind.loanFix, DemoKind.faceCheck, DemoKind.offlineSync],
       builtForReal:
-          'Built for real: main contributor (360 of 448 commits) to a field app '
-          'whose outbox syncs with ordering, retries and idempotency keys, over '
-          'a SQLCipher-encrypted local database.',
+          'Built for real: ten loan-rejection recovery flows, guided face '
+          'capture, location-aware address checks and a server-side PIN '
+          'migration in the customer app; main contributor (360 of 448 '
+          'commits) to the offline-first agent app.',
       result:
-          'Result: nothing lost or duplicated when the connection drops '
-          'mid-write, with encryption at rest tested on an Android emulator in CI.',
+          'Result: onboarding retention up about 15% and crashes down about '
+          '25% on the live customer app.',
     ),
     Project(
       name: 'Event marketplace',

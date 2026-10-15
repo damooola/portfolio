@@ -5,6 +5,8 @@ import '../data/portfolio_data.dart';
 import '../demos/offline_sync_demo.dart';
 import '../demos/otp_demo.dart';
 import '../demos/chat_demo.dart';
+import '../demos/face_check_demo.dart';
+import '../demos/loan_fix_demo.dart';
 import '../demos/planner_demo.dart';
 import '../demos/route_map_demo.dart';
 import '../services/sfx.dart';
@@ -344,6 +346,8 @@ class _PhoneColumnState extends State<_PhoneColumn> {
     final isMobile = AppBreakpoints.isMobile(MediaQuery.sizeOf(context).width);
     final kind = project.demos[_demo.clamp(0, project.demos.length - 1)];
     final demo = switch (kind) {
+      DemoKind.loanFix => const LoanFixDemo(),
+      DemoKind.faceCheck => const FaceCheckDemo(),
       DemoKind.offlineSync => const OfflineSyncDemo(),
       DemoKind.planner => const PlannerDemo(),
       DemoKind.chat => const ChatDemo(),
@@ -419,6 +423,8 @@ class _DemoTabs extends StatelessWidget {
     DemoKind.planner => Icons.calendar_view_day_outlined,
     DemoKind.chat => Icons.chat_bubble_outline,
     DemoKind.routeMap => Icons.map_outlined,
+    DemoKind.loanFix => Icons.fact_check_outlined,
+    DemoKind.faceCheck => Icons.face_retouching_natural,
     DemoKind.offlineSync => Icons.sync,
     DemoKind.otp => Icons.pin_outlined,
   };
