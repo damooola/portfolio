@@ -48,3 +48,6 @@ app.*.map.json
 CLAUDE.md
 .claude/
 .github/modernize/
+
+# Firebase CLI local cache
+.firebase/
