@@ -78,6 +78,26 @@ void main() {
     }
   });
 
+  testWidgets(
+    'nav name appears once the hero name scrolls away, and leaves again',
+    (tester) async {
+      await _pumpAt(tester, const Size(1440, 900));
+      final navName = find.byWidgetPredicate(
+        (w) => w is Semantics && w.properties.label == ProfileData.name,
+      );
+      expect(navName, findsNothing);
+
+      final page = find.byType(SingleChildScrollView).first;
+      await tester.drag(page, const Offset(0, -900));
+      await _settle(tester);
+      expect(navName, findsOneWidget);
+
+      await tester.drag(page, const Offset(0, 2000));
+      await _settle(tester);
+      expect(navName, findsNothing);
+    },
+  );
+
   testWidgets('nav links land on sections and reveal them', (tester) async {
     await _pumpAt(tester, const Size(1440, 1500));
     for (final (link, title) in const [

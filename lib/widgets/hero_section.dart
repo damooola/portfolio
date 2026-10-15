@@ -10,10 +10,14 @@ class HeroSection extends StatelessWidget {
   final VoidCallback onViewWork;
   final VoidCallback onContact;
 
+  /// On the big name, so the nav can tell when it has scrolled away.
+  final Key? nameKey;
+
   const HeroSection({
     super.key,
     required this.onViewWork,
     required this.onContact,
+    this.nameKey,
   });
 
   @override
@@ -54,8 +58,14 @@ class HeroSection extends StatelessWidget {
       children: [
         const _StatusPill(),
         const SizedBox(height: AppSpacing.lg),
-        nameLine(ProfileData.firstName, 0),
-        nameLine(ProfileData.lastName, ProfileData.firstName.length),
+        Column(
+          key: nameKey,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            nameLine(ProfileData.firstName, 0),
+            nameLine(ProfileData.lastName, ProfileData.firstName.length),
+          ],
+        ),
         const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 620),

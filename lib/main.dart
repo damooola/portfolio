@@ -67,6 +67,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   final _careerKey = GlobalKey();
   final _skillsKey = GlobalKey();
   final _afterHoursKey = GlobalKey();
+  final _heroNameKey = GlobalKey();
   final _writingKey = GlobalKey();
   final _contactKey = GlobalKey();
 
@@ -193,6 +194,8 @@ class _PortfolioHomeState extends State<PortfolioHome> {
       extendBodyBehindAppBar: true,
       appBar: NavBar(
         onHome: _scrollToTop,
+        scroll: _scrollController,
+        heroNameKey: _heroNameKey,
         links: [
           NavLink('Work', () => _scrollTo(_workKey)),
           NavLink('Career', () => _scrollTo(_careerKey)),
@@ -212,6 +215,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                 children: [
                   const SizedBox(height: 68),
                   HeroSection(
+                    nameKey: _heroNameKey,
                     onViewWork: () => _scrollTo(_workKey),
                     onContact: () => _scrollTo(_contactKey),
                   ),

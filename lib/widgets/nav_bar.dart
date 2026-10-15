@@ -19,11 +19,18 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
   final List<NavLink> links;
   final List<Widget> trailing;
 
+  /// The page's scroll and the hero name: once the big name scrolls under
+  /// the nav, a small copy writes itself in beside the logo.
+  final ScrollController? scroll;
+  final GlobalKey? heroNameKey;
+
   const NavBar({
     super.key,
     required this.onHome,
     required this.links,
     this.trailing = const [],
+    this.scroll,
+    this.heroNameKey,
   });
 
   @override
@@ -68,6 +75,17 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Row(
                     children: [
                       _Monogram(onTap: onHome),
+                      if (scroll != null && heroNameKey != null)
+                        Flexible(
+                          child: _ScrolledName(
+                            scroll: scroll!,
+                            heroNameKey: heroNameKey!,
+                            navBottom:
+                                MediaQuery.paddingOf(context).top +
+                                preferredSize.height,
+                            onTap: onHome,
+                          ),
+                        ),
                       const Spacer(),
                       for (final link in shown) ...[
                         _NavText(link: link),
@@ -296,6 +314,100 @@ class NowPlayingPill extends StatelessWidget {
                     ),
                   ),
                 ),
+        );
+      },
+    );
+  }
+}
+
+/// "Damola Nelson" beside the logo, tied to scroll position rather than a
+/// timer: as the hero name slides under the nav, the letters rise in one by
+/// one; scroll back up and they sink away again.
+class _ScrolledName extends StatelessWidget {
+  final ScrollController scroll;
+  final GlobalKey heroNameKey;
+  final double navBottom;
+  final VoidCallback onTap;
+
+  const _ScrolledName({
+    required this.scroll,
+    required this.heroNameKey,
+    required this.navBottom,
+    required this.onTap,
+  });
+
+  /// 0 while the hero name is fully visible below the nav, 1 once it has
+  /// completely passed under it.
+  double _progress() {
+    final box = heroNameKey.currentContext?.findRenderObject();
+    if (box is! RenderBox || !box.attached || !box.hasSize) return 0;
+    final top = box.localToGlobal(Offset.zero).dy;
+    final height = box.size.height;
+    if (height <= 0) return 0;
+    return ((navBottom - top) / height).clamp(0.0, 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduced = AppMotion.reduced(context);
+    const name = ProfileData.name;
+    const stagger = 5.0; // how many letters are mid-animation at once
+
+    return ListenableBuilder(
+      listenable: scroll,
+      builder: (context, _) {
+        final p = _progress();
+        if (p == 0) return const SizedBox.shrink();
+
+        return Semantics(
+          label: name,
+          button: true,
+          excludeSemantics: true,
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (var i = 0; i < name.length; i++)
+                        Builder(
+                          builder: (context) {
+                            // Each letter has its own slice of the scroll.
+                            final t = reduced
+                                ? p
+                                : ((p * (name.length + stagger) - i) / stagger)
+                                      .clamp(0.0, 1.0);
+                            final eased = Curves.easeOutCubic.transform(t);
+                            return Opacity(
+                              opacity: eased,
+                              child: Transform.translate(
+                                offset: Offset(
+                                  0,
+                                  reduced ? 0 : (1 - eased) * 14,
+                                ),
+                                child: Text(
+                                  name[i],
+                                  style: AppText.display.copyWith(
+                                    fontSize: 18,
+                                    letterSpacing: -0.2,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
