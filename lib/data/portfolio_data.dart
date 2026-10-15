@@ -33,17 +33,18 @@ class ProfileData {
 /// The "now playing" strip in the hero. Hand-edited — update it whenever
 /// you like. Clicking the strip cycles through these in order.
 class NowPlayingData {
-  // TODO: these are placeholders — put in your real game, song and score.
+  // TODO: the game and Chelsea result are placeholders — put in your own.
   static const items = <(String, String, IconData)>[
     ('PLAYING', 'EA SPORTS FC 26', Icons.sports_esports_outlined),
-    ('ON REPEAT', 'Add your song here', Icons.music_note_outlined),
+    ('ON REPEAT', 'Press play on my playlist', Icons.music_note_outlined),
     ('CHELSEA', 'Last result goes here', Icons.sports_soccer_outlined),
     ('LEARNING', 'Go, one service at a time', Icons.school_outlined),
   ];
 
-  // TODO: paste a Spotify playlist link (Share → Copy link to playlist).
-  // While it's empty the strip stays hand-edited with no player.
-  static const spotifyPlaylistUrl = '';
+  /// Spotify share link (Share → Copy link to playlist). The play button on
+  /// the song item opens Spotify's player for it; leave empty to hide it.
+  static const spotifyPlaylistUrl =
+      'https://open.spotify.com/playlist/129dbvsNU8XV8ZGlrrjM3x';
 }
 
 enum DemoKind { offlineSync, routeMap, otp }
