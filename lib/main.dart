@@ -8,6 +8,7 @@ import 'widgets/skills_section.dart';
 import 'widgets/spotlight.dart';
 import 'widgets/trophies_section.dart';
 import 'widgets/work_section.dart';
+import 'widgets/writing_section.dart';
 
 void main() {
   runApp(const PortfolioApp());
@@ -40,6 +41,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   final _workKey = GlobalKey();
   final _skillsKey = GlobalKey();
   final _trophiesKey = GlobalKey();
+  final _writingKey = GlobalKey();
   final _contactKey = GlobalKey();
 
   @override
@@ -55,6 +57,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
     final target = switch (project != null ? 'work' : fragment) {
       'work' => _workKey,
       'trophies' => _trophiesKey,
+      'writing' => _writingKey,
       'skills' => _skillsKey,
       'contact' => _contactKey,
       _ => null,
@@ -125,6 +128,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                     key: _trophiesKey,
                     child: const TrophiesSection(),
                   ),
+                  KeyedSubtree(key: _writingKey, child: const WritingSection()),
                   KeyedSubtree(key: _contactKey, child: const ContactSection()),
                 ],
               ),
