@@ -92,6 +92,18 @@ void main() {
     await mouse.moveTo(const Offset(1190, 890));
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.text('CURRENTLY LEARNING'), findsOneWidget);
+
+    // Clicking inside the panel keeps it; clicking anywhere else closes it.
+    final panelText = tester.getCenter(find.text('CURRENTLY LEARNING'));
+    await mouse.down(panelText);
+    await mouse.up();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('CURRENTLY LEARNING'), findsOneWidget);
+
+    await mouse.down(const Offset(1190, 890));
+    await mouse.up();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('CURRENTLY LEARNING'), findsNothing);
   });
 
   testWidgets('panel sits under its tile and stays on the page', (

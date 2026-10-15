@@ -34,6 +34,18 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
     _music.load();
   }
 
+  /// Taps on the tiles or the open panel count as "inside"; anywhere else on
+  /// the page closes a pinned panel.
+  final _tapGroup = Object();
+
+  void _dismiss(PointerDownEvent _) {
+    if (_pinned == null && _hovered == null) return;
+    setState(() {
+      _pinned = null;
+      _hovered = null;
+    });
+  }
+
   void _tap(NowPanel panel) {
     Sfx.play(Sound.click);
     setState(() {
@@ -75,37 +87,43 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
         padding: EdgeInsets.only(left: left),
         child: Align(
           alignment: Alignment.topLeft,
-          child: AnimatedContainer(
-            duration: AppMotion.big,
-            curve: AppMotion.settle,
-            width: panelWidth,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AnimatedSwitcher(
-                  duration: AppMotion.hover,
-                  layoutBuilder: (current, previous) => Stack(
-                    alignment: Alignment.topLeft,
-                    children: [...previous, ?current],
+          child: TapRegion(
+            groupId: _tapGroup,
+            child: AnimatedContainer(
+              duration: AppMotion.big,
+              curve: AppMotion.settle,
+              width: panelWidth,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  AnimatedSwitcher(
+                    duration: AppMotion.hover,
+                    layoutBuilder: (current, previous) => Stack(
+                      alignment: Alignment.topLeft,
+                      children: [...previous, ?current],
+                    ),
+                    child: KeyedSubtree(
+                      key: ValueKey(panel),
+                      child: switch (panel) {
+                        NowPanel.chess => const _LastWinPanel(),
+                        NowPanel.music => _PlaylistPanel(music: _music),
+                        NowPanel.chelsea => const _MatchPanel(),
+                        NowPanel.learning => const _LearningPanel(),
+                      },
+                    ),
                   ),
-                  child: KeyedSubtree(
-                    key: ValueKey(panel),
-                    child: switch (panel) {
-                      NowPanel.chess => const _LastWinPanel(),
-                      NowPanel.music => _PlaylistPanel(music: _music),
-                      NowPanel.chelsea => const _MatchPanel(),
-                      NowPanel.learning => const _LearningPanel(),
-                    },
+                  AnimatedPositioned(
+                    duration: AppMotion.big,
+                    curve: AppMotion.settle,
+                    top: -_caretSize.height + 1,
+                    left: caretLeft,
+                    child: const CustomPaint(
+                      size: _caretSize,
+                      painter: _Caret(),
+                    ),
                   ),
-                ),
-                AnimatedPositioned(
-                  duration: AppMotion.big,
-                  curve: AppMotion.settle,
-                  top: -_caretSize.height + 1,
-                  left: caretLeft,
-                  child: const CustomPaint(size: _caretSize, painter: _Caret()),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -130,35 +148,39 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Wrap(
-                spacing: gap,
-                runSpacing: gap,
-                children: [
-                  for (final (i, panel) in NowPanel.values.indexed)
-                    SizedBox(
-                          width: tileWidth,
-                          child: _NowTile(
-                            panel: panel,
-                            music: _music,
-                            compact: columns == 2,
-                            open: _shown == panel,
-                            pinned: _pinned == panel,
-                            onHover: (on) => setState(
-                              () => _hovered = on ? panel : _hovered,
+              TapRegion(
+                groupId: _tapGroup,
+                onTapOutside: _dismiss,
+                child: Wrap(
+                  spacing: gap,
+                  runSpacing: gap,
+                  children: [
+                    for (final (i, panel) in NowPanel.values.indexed)
+                      SizedBox(
+                            width: tileWidth,
+                            child: _NowTile(
+                              panel: panel,
+                              music: _music,
+                              compact: columns == 2,
+                              open: _shown == panel,
+                              pinned: _pinned == panel,
+                              onHover: (on) => setState(
+                                () => _hovered = on ? panel : _hovered,
+                              ),
+                              onTap: () => _tap(panel),
                             ),
-                            onTap: () => _tap(panel),
+                          )
+                          .animate()
+                          .fadeIn(delay: (60 * i).ms, duration: 300.ms)
+                          .slideY(
+                            begin: 0.3,
+                            end: 0,
+                            delay: (60 * i).ms,
+                            duration: AppMotion.big,
+                            curve: AppMotion.settle,
                           ),
-                        )
-                        .animate()
-                        .fadeIn(delay: (60 * i).ms, duration: 300.ms)
-                        .slideY(
-                          begin: 0.3,
-                          end: 0,
-                          delay: (60 * i).ms,
-                          duration: AppMotion.big,
-                          curve: AppMotion.settle,
-                        ),
-                ],
+                  ],
+                ),
               ),
               AnimatedSize(
                 duration: AppMotion.big,
