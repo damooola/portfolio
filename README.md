@@ -8,11 +8,11 @@ The concept is **After Hours**: a dark navy room, a soft blue glow that follows 
 
 | Section | What it does |
 | --- | --- |
-| Hero | The name drops in letter by letter, plus a status pill and a clickable "now playing" strip |
+| Hero | The name drops in letter by letter, plus a status pill and "now playing" tiles (game, song with a Spotify player, Chelsea, learning) |
 | 01 Work | Three projects, each with a live demo in a phone that tilts toward the cursor |
 | 02 Skills | A football-game player card that flips to show the attribute bars |
 | 03 Trophies | Resume stats shown as console-style achievements |
-| 04 Writing | A draggable row of articles, filterable by platform (hidden until there are articles) |
+| 04 Writing | A draggable row of Flutter articles from Hashnode and Coder Legion, plus three personal Medium essays shown on phones |
 | 05 Contact | Click to copy my email, or press **E** |
 
 ## Live demos

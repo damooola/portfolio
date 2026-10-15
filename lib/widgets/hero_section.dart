@@ -238,8 +238,9 @@ class PulsingDot extends StatelessWidget {
   }
 }
 
-/// A small "now playing" strip. Click to cycle: game, song, Chelsea, learning.
-/// On the song, a play button opens the Spotify playlist player underneath.
+/// "Now playing" tiles laid out side by side: game, song, Chelsea,
+/// learning. The song tile has a play button that opens the Spotify
+/// playlist player under the row.
 class NowPlayingStrip extends StatefulWidget {
   const NowPlayingStrip({super.key});
 
@@ -248,158 +249,206 @@ class NowPlayingStrip extends StatefulWidget {
 }
 
 class _NowPlayingStripState extends State<NowPlayingStrip> {
-  int _index = 0;
-  bool _hover = false;
   bool _player = false;
 
   static final _hasPlaylist =
       SpotifyEmbed.embedUrl(NowPlayingData.spotifyPlaylistUrl) != null;
 
-  void _next() =>
-      setState(() => _index = (_index + 1) % NowPlayingData.items.length);
+  void _togglePlayer() {
+    Sfx.play(Sound.click);
+    setState(() => _player = !_player);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final (label, value, icon) = NowPlayingData.items[_index];
-    final isSong = icon == Icons.music_note_outlined;
+    const items = NowPlayingData.items;
+    const gap = 10.0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _strip(label, value, icon, showPlay: isSong && _hasPlaylist),
-        AnimatedSize(
-          duration: AppMotion.big,
-          curve: AppMotion.settle,
-          alignment: Alignment.topLeft,
-          child: _player
-              ? ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420),
-                  child: const Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: SpotifyEmbed(
-                      shareUrl: NowPlayingData.spotifyPlaylistUrl,
-                    ),
-                  ),
-                )
-              : const SizedBox(width: 0),
-        ),
-      ],
-    );
-  }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Four across when there's room, otherwise a 2x2 grid.
+        final columns = constraints.maxWidth >= 860 ? 4 : 2;
+        final tileWidth =
+            (constraints.maxWidth - gap * (columns - 1)) / columns;
 
-  Widget _strip(
-    String label,
-    String value,
-    IconData icon, {
-    required bool showPlay,
-  }) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hover = true),
-      onExit: (_) => setState(() => _hover = false),
-      child: GestureDetector(
-        onTap: _next,
-        child: AnimatedContainer(
-          duration: AppMotion.hover,
-          constraints: const BoxConstraints(maxWidth: 420),
-          padding: const EdgeInsets.fromLTRB(12, 10, 16, 10),
-          decoration: BoxDecoration(
-            color: _hover ? AppColors.raised : AppColors.surface,
-            border: Border.all(
-              color: _hover
-                  ? AppColors.blue.withValues(alpha: 0.5)
-                  : AppColors.line,
-            ),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: AppColors.blueDeep,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 18, color: AppColors.text),
-              ),
-              const SizedBox(width: 12),
-              Flexible(
-                child: AnimatedSwitcher(
-                  duration: AppMotion.hover,
-                  transitionBuilder: (child, anim) => FadeTransition(
-                    opacity: anim,
-                    child: SlideTransition(
-                      position: Tween(
-                        begin: const Offset(0, 0.3),
-                        end: Offset.zero,
-                      ).animate(anim),
-                      child: child,
-                    ),
-                  ),
-                  child: Column(
-                    key: ValueKey(_index),
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'NOW · $label',
-                        style: AppText.monoLabel.copyWith(fontSize: 10),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Wrap(
+              spacing: gap,
+              runSpacing: gap,
+              children: [
+                for (var i = 0; i < items.length; i++)
+                  SizedBox(
+                        width: tileWidth,
+                        child: _NowTile(
+                          item: items[i],
+                          compact: columns == 2,
+                          playing: _player,
+                          onPlay:
+                              items[i].$3 == Icons.music_note_outlined &&
+                                  _hasPlaylist
+                              ? _togglePlayer
+                              : null,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(delay: (60 * i).ms, duration: 300.ms)
+                      .slideY(
+                        begin: 0.3,
+                        end: 0,
+                        delay: (60 * i).ms,
+                        duration: AppMotion.big,
+                        curve: AppMotion.settle,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        value,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppText.body.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          height: 1.3,
+              ],
+            ),
+            AnimatedSize(
+              duration: AppMotion.big,
+              curve: AppMotion.settle,
+              alignment: Alignment.topLeft,
+              child: _player
+                  ? ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 520),
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: SpotifyEmbed(
+                          shareUrl: NowPlayingData.spotifyPlaylistUrl,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              if (showPlay || _player) ...[
-                Tooltip(
-                  message: _player ? 'Hide player' : 'Play on Spotify',
-                  child: GestureDetector(
-                    onTap: () {
-                      Sfx.play(Sound.click);
-                      setState(() => _player = !_player);
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: const BoxDecoration(
-                        color: AppColors.blue,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _player
-                            ? Icons.close_rounded
-                            : Icons.play_arrow_rounded,
-                        size: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-              ],
-              Text(
-                '${_index + 1}/${NowPlayingData.items.length}',
-                style: AppText.mono.copyWith(
-                  fontSize: 11,
-                  color: AppColors.textMuted,
-                ),
-              ),
-            ],
+                    )
+                  : const SizedBox(width: 0),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _NowTile extends StatefulWidget {
+  final (String, String, IconData) item;
+  final bool compact;
+  final bool playing;
+
+  /// Set on the song tile when a playlist is configured.
+  final VoidCallback? onPlay;
+
+  const _NowTile({
+    required this.item,
+    required this.compact,
+    required this.playing,
+    this.onPlay,
+  });
+
+  @override
+  State<_NowTile> createState() => _NowTileState();
+}
+
+class _NowTileState extends State<_NowTile> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, value, icon) = widget.item;
+    final onPlay = widget.onPlay;
+
+    final tile = AnimatedContainer(
+      duration: AppMotion.hover,
+      padding: EdgeInsets.all(widget.compact ? 10 : 12),
+      decoration: BoxDecoration(
+        color: _hover ? AppColors.raised : AppColors.surface,
+        border: Border.all(
+          color: _hover
+              ? AppColors.blue.withValues(alpha: 0.5)
+              : AppColors.line,
+        ),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: widget.compact ? 30 : 36,
+            height: widget.compact ? 30 : 36,
+            decoration: BoxDecoration(
+              color: AppColors.blueDeep,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              size: widget.compact ? 16 : 18,
+              color: AppColors.text,
+            ),
           ),
+          SizedBox(width: widget.compact ? 8 : 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.compact ? label : 'NOW · $label',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.monoLabel.copyWith(
+                    fontSize: widget.compact ? 9 : 10,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  maxLines: widget.compact ? 2 : 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.body.copyWith(
+                    fontSize: widget.compact ? 12.5 : 14,
+                    fontWeight: FontWeight.w600,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (onPlay != null) ...[
+            const SizedBox(width: 8),
+            Container(
+              width: 30,
+              height: 30,
+              decoration: const BoxDecoration(
+                color: AppColors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                widget.playing ? Icons.close_rounded : Icons.play_arrow_rounded,
+                size: 18,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+
+    // Only the song tile is clickable (it toggles the player).
+    if (onPlay == null) {
+      return MouseRegion(
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: tile,
+      );
+    }
+    return Tooltip(
+      message: widget.playing ? 'Hide player' : 'Play on Spotify',
+      child: Semantics(
+        button: true,
+        label: widget.playing
+            ? 'Hide Spotify player'
+            : 'Play my playlist on Spotify',
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => setState(() => _hover = true),
+          onExit: (_) => setState(() => _hover = false),
+          child: GestureDetector(onTap: onPlay, child: tile),
         ),
       ),
     );

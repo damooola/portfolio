@@ -30,13 +30,14 @@ class ProfileData {
   static const resumeAssetPath = 'assets/resume.pdf';
 }
 
-/// The "now playing" strip in the hero. Hand-edited — update it whenever
-/// you like. Clicking the strip cycles through these in order.
+/// The "now playing" tiles in the hero, shown side by side. Hand-edited —
+/// update them whenever you like. Keep the song as the music-note item: it
+/// gets the Spotify play button.
 class NowPlayingData {
   // TODO: the game and Chelsea result are placeholders — put in your own.
   static const items = <(String, String, IconData)>[
     ('PLAYING', 'EA SPORTS FC 26', Icons.sports_esports_outlined),
-    ('ON REPEAT', 'Press play on my playlist', Icons.music_note_outlined),
+    ('ON REPEAT', 'My playlist', Icons.music_note_outlined),
     ('CHELSEA', 'Last result goes here', Icons.sports_soccer_outlined),
     ('LEARNING', 'Go, one service at a time', Icons.school_outlined),
   ];
