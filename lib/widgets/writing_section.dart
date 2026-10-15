@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,11 +54,35 @@ class Article {
   }
 }
 
-/// Technical articles in a horizontal row you can drag or flick, like a
-/// game library, with filter chips by platform. Below them, a few personal
-/// essays shown as phone screenshots.
+/// A short pick of technical articles (the ones my resume features, then
+/// the newest) in a grid, with links to read the rest on the blogs. Below
+/// them, a few personal essays shown as phone screenshots.
 class WritingSection extends StatefulWidget {
   const WritingSection({super.key});
+
+  /// How many articles to show before "read the rest".
+  static const shownCount = 6;
+
+  /// Featured first, in this order (matched by title).
+  static const featured = [
+    'Designing a Scalable, High-Performance Real-Time Social Feed with Flutter',
+    'The Selfie Was Fine. The Pixels Were Sideways.',
+    'The OTP Boxes That Would Not Let Go',
+  ];
+
+  /// The featured posts, then the newest others, up to [shownCount].
+  static List<Article> pick(List<Article> all) {
+    final byTitle = {for (final a in all) a.title: a};
+    final picked = <Article>[
+      for (final t in featured)
+        if (byTitle[t] != null) byTitle[t]!,
+    ];
+    for (final a in all) {
+      if (picked.length >= shownCount) break;
+      if (!picked.contains(a)) picked.add(a);
+    }
+    return picked;
+  }
 
   @override
   State<WritingSection> createState() => _WritingSectionState();
@@ -67,23 +90,6 @@ class WritingSection extends StatefulWidget {
 
 class _WritingSectionState extends State<WritingSection> {
   late final Future<List<Article>> _articles = Article.load();
-  final _scroll = ScrollController();
-  String? _platform;
-
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  void _filter(String? platform) {
-    if (platform == _platform) return;
-    Sfx.play(Sound.click);
-    setState(() => _platform = platform);
-    if (_scroll.hasClients) {
-      _scroll.animateTo(0, duration: AppMotion.big, curve: AppMotion.settle);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,13 +101,7 @@ class _WritingSectionState extends State<WritingSection> {
         if (articles.isEmpty && personal.isEmpty) {
           return const SizedBox.shrink();
         }
-
-        final platforms = {
-          for (final a in articles) ...[a.platform, ...a.alsoOn],
-        }.toList();
-        final shown = _platform == null
-            ? articles
-            : articles.where((a) => a.isOn(_platform!)).toList();
+        final shown = WritingSection.pick(articles);
         final isMobile = AppBreakpoints.isMobile(
           MediaQuery.sizeOf(context).width,
         );
@@ -117,62 +117,54 @@ class _WritingSectionState extends State<WritingSection> {
                 caption:
                     'Things I figured out the hard way, written down so you don\'t have to.',
               ),
-              if (articles.isNotEmpty)
-                _RowLabel(
+              if (articles.isNotEmpty) ...[
+                const _RowLabel(
                   'On the record',
-                  '${articles.length} technical posts · Flutter, mostly',
+                  'A few favourites · Flutter, mostly',
                 ),
-              if (platforms.length > 1) ...[
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _FilterChip(
-                      label: 'All',
-                      count: articles.length,
-                      selected: _platform == null,
-                      onTap: () => _filter(null),
-                    ),
-                    for (final p in platforms)
-                      _FilterChip(
-                        label: p,
-                        count: articles.where((a) => a.isOn(p)).length,
-                        selected: _platform == p,
-                        onTap: () => _filter(p),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-              ],
-              if (articles.isNotEmpty)
                 Reveal(
-                  child: SizedBox(
-                    height: 280,
-                    // Mouse drag scrolls the row too, like flicking a library.
-                    child: ScrollConfiguration(
-                      behavior: const _DragEverywhere(),
-                      child: ListView.separated(
-                        controller: _scroll,
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        clipBehavior: Clip.none,
-                        itemCount: shown.length,
-                        separatorBuilder: (_, _) =>
-                            const SizedBox(width: AppSpacing.sm),
-                        itemBuilder: (context, i) => _ArticleCard(
-                          key: ValueKey(shown[i].url),
-                          article: shown[i],
-                          width: isMobile ? 280 : 340,
-                        ),
-                      ),
-                    ),
+                  child: LayoutBuilder(
+                    builder: (context, box) {
+                      const gap = AppSpacing.sm;
+                      final columns = box.maxWidth >= 980
+                          ? 3
+                          : (box.maxWidth >= 600 ? 2 : 1);
+                      final width =
+                          ((box.maxWidth - gap * (columns - 1)) / columns)
+                              .floorToDouble();
+                      return Wrap(
+                        spacing: gap,
+                        runSpacing: gap,
+                        children: [
+                          for (final a in shown)
+                            SizedBox(
+                              height: 264,
+                              child: _ArticleCard(
+                                key: ValueKey(a.url),
+                                article: a,
+                                width: width,
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
                 ),
-              if (shown.length > 2) ...[
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  'DRAG OR SCROLL SIDEWAYS →',
-                  style: AppText.monoLabel.copyWith(fontSize: 10),
+                const SizedBox(height: AppSpacing.md),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    _MoreLink(
+                      label: 'Read all my posts on Daily Flutters',
+                      url: ProfileData.blogUrl,
+                      primary: true,
+                    ),
+                    const _MoreLink(
+                      label: 'Coder Legion',
+                      url: 'https://coderlegion.com/user/damolanelson',
+                    ),
+                  ],
                 ),
               ],
               if (personal.isNotEmpty) ...[
@@ -203,67 +195,74 @@ class _WritingSectionState extends State<WritingSection> {
   }
 }
 
-class _DragEverywhere extends MaterialScrollBehavior {
-  const _DragEverywhere();
+class _MoreLink extends StatefulWidget {
+  final String label;
+  final String url;
+  final bool primary;
+
+  const _MoreLink({
+    required this.label,
+    required this.url,
+    this.primary = false,
+  });
 
   @override
-  Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-    PointerDeviceKind.trackpad,
-    PointerDeviceKind.stylus,
-  };
+  State<_MoreLink> createState() => _MoreLinkState();
 }
 
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final int count;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _FilterChip({
-    required this.label,
-    required this.count,
-    required this.selected,
-    required this.onTap,
-  });
+class _MoreLinkState extends State<_MoreLink> {
+  bool _hover = false;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      button: true,
-      selected: selected,
+      link: true,
+      label: widget.label,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
         child: GestureDetector(
-          onTap: onTap,
+          onTap: () {
+            Sfx.play(Sound.click);
+            launchUrl(Uri.parse(widget.url), webOnlyWindowName: '_blank');
+          },
           child: AnimatedContainer(
             duration: AppMotion.hover,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: selected ? AppColors.blue : AppColors.surface,
+              color: widget.primary
+                  ? (_hover
+                        ? AppColors.blue
+                        : AppColors.blue.withValues(alpha: 0.9))
+                  : (_hover ? AppColors.raised : Colors.transparent),
               borderRadius: BorderRadius.circular(999),
               border: Border.all(
-                color: selected ? AppColors.blue : AppColors.line,
+                color: widget.primary ? AppColors.blue : AppColors.line,
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  label,
-                  style: AppText.body.copyWith(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: selected ? Colors.white : AppColors.text,
+                Flexible(
+                  child: Text(
+                    widget.label,
+                    style: AppText.body.copyWith(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  '$count',
-                  style: AppText.mono.copyWith(
-                    fontSize: 11,
-                    color: selected ? Colors.white70 : AppColors.textMuted,
+                AnimatedSlide(
+                  offset: Offset(_hover ? 0.25 : 0, 0),
+                  duration: AppMotion.hover,
+                  curve: AppMotion.spring,
+                  child: const Icon(
+                    Icons.arrow_forward,
+                    size: 16,
+                    color: Colors.white,
                   ),
                 ),
               ],

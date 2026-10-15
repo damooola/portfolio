@@ -8,10 +8,34 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:portfolio/main.dart';
 import 'package:portfolio/data/portfolio_data.dart';
+import 'package:portfolio/widgets/writing_section.dart';
 
 void main() {
   // Fire visibility callbacks immediately instead of on a debounce timer.
   VisibilityDetectorController.instance.updateInterval = Duration.zero;
+
+  test(
+    'writing shows featured posts first, then the newest, capped at six',
+    () {
+      Article a(String title, String date) => Article(
+        title: title,
+        url: 'https://example.com/$title',
+        platform: 'Hashnode',
+        snippet: '',
+        readMinutes: 5,
+        date: date,
+      );
+      final all = [
+        a('Newest', '2026-09-01'),
+        a('The OTP Boxes That Would Not Let Go', '2026-06-01'),
+        for (var i = 0; i < 8; i++) a('Old $i', '2026-0${i % 5 + 1}-01'),
+      ];
+      final picked = WritingSection.pick(all);
+      expect(picked.length, WritingSection.shownCount);
+      expect(picked.first.title, 'The OTP Boxes That Would Not Let Go');
+      expect(picked[1].title, 'Newest');
+    },
+  );
 
   for (final size in const [Size(390, 844), Size(820, 1180), Size(1440, 900)]) {
     testWidgets('${size.width.toInt()}px: builds and scrolls cleanly', (

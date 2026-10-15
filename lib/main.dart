@@ -197,6 +197,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
           NavLink('Work', () => _scrollTo(_workKey)),
           NavLink('Career', () => _scrollTo(_careerKey)),
           NavLink('Skills', () => _scrollTo(_skillsKey)),
+          NavLink('After hours', () => _scrollTo(_afterHoursKey)),
           NavLink('Writing', () => _scrollTo(_writingKey)),
           NavLink('Contact', () => _scrollTo(_contactKey)),
         ],

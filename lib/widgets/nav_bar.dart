@@ -34,8 +34,14 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
     final width = MediaQuery.sizeOf(context).width;
     final isMobile = AppBreakpoints.isMobile(width);
     // Phones only get room for the two links recruiters need most.
+    // Phones get the two links recruiters need most, tablets the main four,
+    // desktops everything.
+    const phoneLinks = {'Work', 'Contact'};
+    const tabletLinks = {'Work', 'Career', 'Writing', 'Contact'};
     final shown = isMobile
-        ? links.where((l) => l.label == 'Work' || l.label == 'Contact')
+        ? links.where((l) => phoneLinks.contains(l.label))
+        : width < 1100
+        ? links.where((l) => tabletLinks.contains(l.label))
         : links;
 
     return ClipRect(

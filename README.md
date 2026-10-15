@@ -13,7 +13,7 @@ The concept is **After Hours**: a dark navy room, a soft blue glow that follows 
 | 02 Career | Work history, newest first |
 | 03 Skills | A football-game player card that flips to show the attribute bars |
 | 04 After hours | Four live tiles: what I'm learning, my Chess.com form, my playlist in a custom player, and Chelsea's last result and next game. Hover to preview, click to pin |
-| 05 Writing | A draggable row of Flutter articles from Hashnode and Coder Legion, plus three personal Medium essays shown on phones |
+| 05 Writing | Six favourite Flutter articles (resume picks first) with links to the full blogs, plus three personal Medium essays shown on phones |
 | 06 Contact | Click to copy my email, or press **E** |
 
 ## Live demos
