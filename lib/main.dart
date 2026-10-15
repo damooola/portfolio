@@ -4,9 +4,7 @@ import 'widgets/contact_section.dart';
 import 'widgets/hero_section.dart';
 import 'widgets/nav_bar.dart';
 import 'widgets/scroll_meter.dart';
-import 'widgets/skills_section.dart';
 import 'widgets/spotlight.dart';
-import 'widgets/stats_section.dart';
 import 'widgets/work_section.dart';
 
 void main() {
@@ -36,13 +34,33 @@ class PortfolioHome extends StatefulWidget {
 
 class _PortfolioHomeState extends State<PortfolioHome> {
   final _scrollController = ScrollController();
+  final _project = ValueNotifier(0);
   final _workKey = GlobalKey();
   final _skillsKey = GlobalKey();
   final _contactKey = GlobalKey();
 
   @override
+  void initState() {
+    super.initState();
+    // Deep links: /#work, /#skills, /#contact jump straight to a section.
+    final target = switch (Uri.base.fragment.replaceAll('/', '')) {
+      'work' => _workKey,
+      'skills' => _skillsKey,
+      'contact' => _contactKey,
+      _ => null,
+    };
+    if (target != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final ctx = target.currentContext;
+        if (ctx != null) Scrollable.ensureVisible(ctx);
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _scrollController.dispose();
+    _project.dispose();
     super.dispose();
   }
 
@@ -88,9 +106,10 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                     onViewWork: () => _scrollTo(_workKey),
                     onContact: () => _scrollTo(_contactKey),
                   ),
-                  KeyedSubtree(key: _workKey, child: const WorkSection()),
-                  KeyedSubtree(key: _skillsKey, child: const SkillsSection()),
-                  const StatsSection(),
+                  KeyedSubtree(
+                    key: _workKey,
+                    child: WorkSection(selected: _project),
+                  ),
                   KeyedSubtree(key: _contactKey, child: const ContactSection()),
                 ],
               ),

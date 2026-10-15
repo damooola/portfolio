@@ -2,7 +2,7 @@
 // what the site says — you shouldn't need to touch widget code for content
 // changes. Anything marked TODO is a placeholder you should personalize.
 //
-// Every figure in StatsData comes straight from the resume PDF. Don't add
+// Every figure in TrophiesData comes straight from the resume PDF. Don't add
 // numbers here that aren't on the resume.
 
 import 'package:flutter/material.dart' show IconData, Icons;
@@ -41,174 +41,154 @@ class NowPlayingData {
   ];
 }
 
-enum StatTrend { up, down }
-
-class Stat {
-  final String label;
-  final String value;
-  final String caption;
-  final StatTrend? trend;
-
-  const Stat({
-    required this.label,
-    required this.value,
-    required this.caption,
-    this.trend,
-  });
-}
-
-class StatsData {
-  static const stats = <Stat>[
-    Stat(
-      label: 'CRASH RATE',
-      value: '~25%',
-      caption:
-          'fewer app crashes after architecture and performance work '
-          'on a live lending app.',
-      trend: StatTrend.down,
-    ),
-    Stat(
-      label: 'RETENTION',
-      value: '~15%',
-      caption:
-          'better onboarding retention after redesigning the whole '
-          'sign-up flow.',
-      trend: StatTrend.up,
-    ),
-    Stat(
-      label: 'GATEWAYS',
-      value: '04',
-      caption:
-          'payment gateways integrated — Paystack, Flutterwave, '
-          'Razorpay and Stripe.',
-    ),
-    Stat(
-      label: 'SHIPPING SINCE',
-      value: '2024',
-      caption: 'building Flutter apps for teams in Nigeria, the US and India.',
-    ),
-  ];
-}
+enum DemoKind { offlineSync, routeMap, otp }
 
 class Project {
-  final String title;
-  final String description;
-  final List<String> highlights;
+  final String name;
+  final String org;
+  final String period;
+  final String summary;
   final List<String> tags;
-  final String role;
-  final IconData icon;
-  final String? period;
-  final String? status;
+  final DemoKind demo;
+
+  /// Line under the phone: what was built for real.
+  final String builtForReal;
+
+  /// Second line under the phone: the result. Resume figures only.
+  final String result;
+  final String? linkLabel;
+  final String? linkUrl;
 
   const Project({
-    required this.title,
-    required this.description,
-    required this.highlights,
+    required this.name,
+    required this.org,
+    required this.period,
+    required this.summary,
     required this.tags,
-    required this.role,
-    required this.icon,
-    this.period,
-    this.status,
+    required this.demo,
+    required this.builtForReal,
+    required this.result,
+    this.linkLabel,
+    this.linkUrl,
   });
 }
 
+/// Demos are rebuilt from scratch on mock data — no employer code.
 class ProjectsData {
   static const projects = <Project>[
     Project(
-      title: 'Offline-First Field Agent App',
-      description:
-          'A mobile app for field agents working in low-connectivity '
-          'environments, backed by a Go services layer. Built to keep '
-          'working — and keep data safe — when the network doesn\'t.',
-      highlights: [
-        'Offline-first architecture: writes queue through an outbox '
-            'pattern with ordering, retries, and idempotent request '
-            'handling, so nothing is lost or duplicated when '
-            'connectivity drops mid-transaction.',
-        'Local data encrypted at rest with SQLCipher; verified with a '
-            'dedicated integration test suite that checks the '
-            'encryption guarantees on a real device, not just in theory.',
-        'CI pipeline runs static analysis, unit/widget tests, and a '
-            'hardware-emulator integration test on every change before '
-            'it merges.',
-      ],
+      name: 'Offline-first field app',
+      org: 'Neocash',
+      period: 'NOW',
+      summary:
+          'A field agent app that keeps working on a bad network and keeps '
+          'data safe on a lost phone.',
       tags: ['Flutter', 'Riverpod', 'Go', 'SQLCipher', 'CI/CD'],
-      role: 'Mobile engineer',
-      icon: Icons.shield_outlined,
+      demo: DemoKind.offlineSync,
+      builtForReal:
+          'Built for real: an outbox with ordering, retries and idempotency '
+          'keys, over a SQLCipher-encrypted local database and a Go backend.',
+      result:
+          'Result: nothing lost or duplicated when the connection drops '
+          'mid-write, with encryption checked on a real device in CI.',
     ),
     Project(
-      title: 'Consumer Lending App',
-      description:
-          'A production lending app serving real customers — the kind '
-          'of app where a crash or a broken payment flow has real '
-          'consequences, not just a bad review.',
-      highlights: [
-        'Redesigned the onboarding flow end to end, lifting onboarding '
-            'retention by around 15%.',
-        'Integrated biometric facial verification, document capture, '
-            'and address verification into the KYC flow.',
-        'Built the automated repayment integration through Nigeria\'s '
-            'interbank mandate system, and shipped architecture and '
-            'performance work that cut crashes by around 25%.',
-      ],
-      tags: ['Flutter', 'Riverpod', 'Firebase', 'Payments'],
-      role: 'Mobile engineer',
-      icon: Icons.fingerprint,
-      period: '2026 — NOW',
-      status: 'Live on iOS & Android',
-    ),
-    Project(
-      title: 'Event Marketplace App',
-      description:
-          'A two-sided marketplace connecting event organizers with '
-          'vendors — decoration, catering, photography, and more. I was '
-          'the only mobile engineer on this one, owning the app end to '
-          'end across both the client and vendor experiences.',
-      highlights: [
-        'Built real-time chat between clients and vendors with a custom '
-            'connection service: authenticated handshake, automatic '
-            'reconnection, and an offline message queue that flushes '
-            'once connectivity returns — the most resilient piece of '
-            'infrastructure I\'ve shipped solo.',
-        'Built full auth (email/password with OTP, Google & Apple '
-            'sign-in, password recovery) and role-based experiences for '
-            'clients and vendors in a single app.',
-        'Integrated booking flows, subscription and one-off payments, '
-            'push notifications, and a vendor-facing analytics dashboard.',
-      ],
-      tags: ['Flutter', 'BLoC/Cubit', 'Socket.IO', 'GetIt', 'Firebase'],
-      role: 'Sole mobile developer',
-      icon: Icons.forum_outlined,
+      name: 'Event marketplace',
+      org: 'Ajarra',
       period: '2025 — 2026',
-      status: 'Live on iOS & Android',
+      summary:
+          'A two-sided marketplace connecting event planners with vendors. '
+          'I was the only mobile engineer, end to end.',
+      tags: ['Flutter', 'BLoC', 'Maps', 'Socket.IO', 'Firebase'],
+      demo: DemoKind.routeMap,
+      builtForReal:
+          'Built for real: maps and live tracking, real-time chat with an '
+          'offline message queue, bookings and payments, for clients and vendors.',
+      result: 'Result: shipped solo to both the App Store and Google Play.',
+    ),
+    Project(
+      name: 'OTP boxes, done properly',
+      org: 'Blog post',
+      period: '2026',
+      summary:
+          'Six little boxes that every app gets slightly wrong: focus, paste, '
+          'backspace, autofill. I wrote up how to get them right.',
+      tags: ['Flutter', 'Forms', 'Accessibility', 'UX detail'],
+      demo: DemoKind.otp,
+      builtForReal:
+          'Built for real: one hidden field driving six boxes, so paste, '
+          'SMS autofill and backspace behave like any normal input.',
+      result: 'Write-up: The OTP Boxes That Would Not Let Go.',
+      // TODO: link the real article URL.
+      linkLabel: 'Read the post',
     ),
   ];
 }
 
-class SkillGroup {
-  final String label;
-  final List<String> items;
+/// Resume stats, shown as console-style achievements.
+class Trophy {
+  final String value;
+  final String title;
+  final String detail;
 
-  const SkillGroup({required this.label, required this.items});
+  const Trophy(this.value, this.title, this.detail);
 }
 
-class SkillsData {
-  /// Items shown with a "learning" marker instead of as established skills.
-  static const learning = {'Go'};
+class TrophiesData {
+  static const trophies = <Trophy>[
+    Trophy(
+      '−25%',
+      'Crash buster',
+      'Cut app crashes by about 25% on a live lending app.',
+    ),
+    Trophy(
+      '+15%',
+      'Smooth onboarding',
+      'Lifted onboarding retention by about 15% with a redesigned sign-up.',
+    ),
+    Trophy(
+      '4',
+      'Payment collector',
+      'Integrated Paystack, Flutterwave, Razorpay and Stripe.',
+    ),
+    Trophy(
+      '2',
+      'Store double',
+      'Shipped apps to both the App Store and Google Play.',
+    ),
+  ];
+}
 
-  static const groups = <SkillGroup>[
-    SkillGroup(
-      label: 'Mobile',
-      items: ['Flutter', 'Dart', 'Kotlin', 'Swift', 'Riverpod', 'BLoC'],
-    ),
-    SkillGroup(
-      label: 'Backend & Data',
-      items: ['Go', 'REST APIs', 'Firebase', 'Drift / SQLite', 'SQLCipher'],
-    ),
-    SkillGroup(
-      label: 'Payments',
-      items: ['Paystack', 'Flutterwave', 'Razorpay', 'Stripe'],
-    ),
-    SkillGroup(label: 'Tooling', items: ['Git', 'CI/CD', 'Fastlane', 'Figma']),
+/// Football-game player card. Self-rated — tune the numbers to taste.
+class PlayerCardData {
+  // TODO: these ratings are a starting point — adjust them yourself.
+  static const overall = 86;
+  static const position = 'CAM';
+  static const role = 'Mobile';
+  static const nation = 'NGA';
+  static const club = 'Lagos';
+  static const form = ['W', 'W', 'W', 'D', 'W'];
+
+  static const attributes = <(String, String, int)>[
+    ('FLT', 'Flutter', 90),
+    ('DRT', 'Dart', 88),
+    ('STM', 'State mgmt', 86),
+    ('API', 'APIs', 84),
+    ('TST', 'Testing', 80),
+    ('NAT', 'Native', 74),
+  ];
+
+  /// Shown on the back, under the bars.
+  static const toolkit = [
+    'Riverpod',
+    'BLoC',
+    'Drift',
+    'SQLCipher',
+    'Firebase',
+    'Go',
+    'Kotlin',
+    'Swift',
+    'Fastlane',
+    'Figma',
   ];
 }

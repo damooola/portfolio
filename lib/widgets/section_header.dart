@@ -1,82 +1,72 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import 'reveal.dart';
 
-/// Oversized all-caps section title with a ledger-style rule above it:
-/// `(03) ───────────── ₦`
+/// `01 / WORK ─────────` then a big display title and a short caption.
 class SectionHeader extends StatelessWidget {
   final String index;
+  final String label;
   final String title;
   final String? caption;
-  final bool onDark;
 
   const SectionHeader({
     super.key,
     required this.index,
+    required this.label,
     required this.title,
     this.caption,
-    this.onDark = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.sizeOf(context).width;
     final size = AppBreakpoints.isMobile(width)
-        ? 56.0
+        ? 40.0
         : AppBreakpoints.isDesktop(width)
-        ? 128.0
-        : 88.0;
-    final ink = onDark ? AppColors.night : AppColors.text;
-    final rule = onDark
-        ? AppColors.night.withValues(alpha: 0.25)
-        : AppColors.line;
-    final accent = onDark ? AppColors.blue : AppColors.blue;
+        ? 72.0
+        : 56.0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text('($index)', style: AppText.monoLabel.copyWith(color: accent)),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(child: Container(height: 1, color: rule)),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              '₦',
-              style: AppText.mono.copyWith(color: accent, fontSize: 14),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.md),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title.toUpperCase(),
+    return Reveal(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                index,
+                style: AppText.monoLabel.copyWith(color: AppColors.blue),
+              ),
+              Text('  /  ', style: AppText.monoLabel),
+              Text(
+                label.toUpperCase(),
+                style: AppText.monoLabel.copyWith(color: AppColors.text),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: Container(height: 1, color: AppColors.line)),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            title,
             style: AppText.display.copyWith(
-              color: ink,
               fontSize: size,
-              height: 0.95,
-              letterSpacing: -size * 0.03,
+              height: 1.0,
+              letterSpacing: -size * 0.02,
             ),
           ),
-        ),
-        if (caption != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: Text(
-              caption!,
-              style: AppText.body.copyWith(
-                fontSize: 17,
-                color: onDark
-                    ? AppColors.night.withValues(alpha: 0.8)
-                    : AppColors.textMuted,
+          if (caption != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Text(
+                caption!,
+                style: AppText.bodyMuted.copyWith(fontSize: 17),
               ),
             ),
-          ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
         ],
-        const SizedBox(height: AppSpacing.lg),
-      ],
+      ),
     );
   }
 }

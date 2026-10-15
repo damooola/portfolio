@@ -3,11 +3,15 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:portfolio/main.dart';
 import 'package:portfolio/data/portfolio_data.dart';
 
 void main() {
+  // Fire visibility callbacks immediately instead of on a debounce timer.
+  VisibilityDetectorController.instance.updateInterval = Duration.zero;
+
   for (final size in const [Size(390, 844), Size(820, 1180), Size(1440, 900)]) {
     testWidgets('${size.width.toInt()}px: builds and scrolls cleanly', (
       tester,
