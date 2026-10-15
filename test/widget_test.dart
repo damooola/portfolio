@@ -4,6 +4,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:portfolio/main.dart';
@@ -156,6 +157,8 @@ void main() {
 }
 
 Future<void> _pumpAt(WidgetTester tester, Size size) async {
+  // Like the live site: every font must come from assets/google_fonts/.
+  GoogleFonts.config.allowRuntimeFetching = false;
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);

@@ -78,7 +78,7 @@ jobs:
 
       - name: Build
         if: steps.plan.outputs.deploy == 'true'
-        run: flutter build web --release
+        run: flutter build web --release --no-web-resources-cdn
 
       - name: Deploy to Firebase Hosting
         if: steps.plan.outputs.deploy == 'true' && env.HAS_FIREBASE_SA == 'true'

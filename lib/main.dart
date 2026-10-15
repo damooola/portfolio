@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'services/sfx.dart';
 import 'theme/app_theme.dart';
 import 'widgets/after_hours_section.dart';
@@ -18,6 +19,9 @@ import 'widgets/writing_section.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Fonts ship with the site (assets/google_fonts/), so nothing waits on
+  // fonts.gstatic.com and text never swaps fonts mid-load.
+  GoogleFonts.config.allowRuntimeFetching = false;
   await Sfx.init();
   runApp(const PortfolioApp());
 }

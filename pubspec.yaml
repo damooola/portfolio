@@ -76,6 +76,7 @@ flutter:
     - assets/writing/
     - assets/playlist.json
     - assets/chess/
+    - assets/google_fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -93,7 +93,7 @@ Hosted on Firebase Hosting (project `damola-nelson`). The GitHub Action in `.git
 To deploy manually instead:
 
 ```bash
-flutter build web --release
+flutter build web --release --no-web-resources-cdn
 firebase deploy --only hosting
 ```
 

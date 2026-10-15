@@ -84,12 +84,40 @@
     @media (prefers-reduced-motion: reduce) {
       #loader .mark { animation: none; }
     }
+
+    /* Safety net: if the app hasn't drawn after a while (slow or blocked
+       network), offer the essentials as plain links. */
+    #loader .slow {
+      display: none; max-width: 340px; padding: 0 20px; text-align: center;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    #loader.slow-net .slow { display: block; animation: fade-in 400ms ease both; }
+    #loader .slow p { color: #8B94AE; font-size: 14px; line-height: 1.5; margin: 0 0 14px; }
+    #loader .slow .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    #loader .slow a, #loader .slow button {
+      color: #E9EDF7; font: 600 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+      text-decoration: none; padding: 9px 14px; border-radius: 999px; cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.14); background: transparent;
+    }
+    #loader .slow a.primary { background: #3D6BFF; border-color: #3D6BFF; }
+    #loader .slow button { margin-top: 12px; color: #8B94AE; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   </style>
 </head>
 <body>
   <div id="loader" role="status" aria-label="Loading Damola Nelson's portfolio">
     <div class="mark">DN</div>
     <div class="status">Booting up</div>
+    <div class="slow">
+      <p>Taking longer than usual on this connection. Here are the essentials while it loads:</p>
+      <div class="links">
+        <a class="primary" href="assets/assets/resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
+        <a href="mailto:damolanelson@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/damola-owonifari" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/damooola" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <button type="button" onclick="location.reload()">Reload</button>
+    </div>
   </div>
 
   <!-- Plain-text fallback for crawlers and screen readers before Flutter loads. -->
@@ -100,7 +128,15 @@
   </noscript>
 
   <script>
+    // If the app still hasn't drawn after 12s, show plain-HTML links to the
+    // resume and contacts. Cancelled as soon as Flutter's first frame lands.
+    var slowTimer = setTimeout(function () {
+      var loader = document.getElementById('loader');
+      if (loader) loader.classList.add('slow-net');
+    }, 12000);
+
     window.addEventListener('flutter-first-frame', function () {
+      clearTimeout(slowTimer);
       var loader = document.getElementById('loader');
       if (!loader) return;
       loader.classList.add('done');
