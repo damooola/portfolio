@@ -25,8 +25,9 @@ All demos run on mock data and were rebuilt from scratch. None of them use emplo
 
 ## Toys
 
-- **Keyboard**: `←` `→` switch projects, `Enter` jumps to the demo, `E` emails me, `S` toggles sound, `?` shows all shortcuts
-- **Sound**: off by default. The speaker toggle in the nav remembers your choice.
+- **Keyboard**: `←` `→` switch projects, `Enter` jumps to the demo, `E` emails me, `S` toggles sound effects, `?` shows all shortcuts
+- **Sound effects**: off by default. The speaker toggle in the nav remembers your choice.
+- **Music**: separate from sound effects. Pressing play always plays, and a pill in the nav lets you pause from anywhere on the page.
 - There's also a cheat code, if you know the classic one.
 
 All motion respects the OS "reduce motion" setting.

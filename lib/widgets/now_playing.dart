@@ -1,14 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/portfolio_data.dart';
 import '../services/chess.dart';
 import '../services/football.dart';
+import '../services/music.dart';
 import '../services/sfx.dart';
 import '../theme/app_theme.dart';
 import 'chess_board.dart';
@@ -26,7 +22,7 @@ class NowPlayingStrip extends StatefulWidget {
 }
 
 class _NowPlayingStripState extends State<NowPlayingStrip> {
-  final _music = PlaylistController();
+  final _music = PlaylistController.instance;
   NowPanel? _hovered;
   NowPanel? _pinned;
 
@@ -36,12 +32,6 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
   void initState() {
     super.initState();
     _music.load();
-  }
-
-  @override
-  void dispose() {
-    _music.dispose();
-    super.dispose();
   }
 
   void _tap(NowPanel panel) {
@@ -698,143 +688,6 @@ class _LastWinPanel extends StatelessWidget {
 }
 
 // ── Music: our own player for the playlist ────────────────────────────
-
-class Track {
-  final String title;
-  final String artist;
-  final Duration length;
-  final String? preview;
-  final String url;
-
-  const Track(this.title, this.artist, this.length, this.preview, this.url);
-}
-
-class Playlist {
-  final String name;
-  final String owner;
-  final String url;
-  final String? cover;
-  final List<Track> tracks;
-
-  const Playlist(this.name, this.owner, this.url, this.cover, this.tracks);
-
-  /// From assets/playlist.json, written by tool/fetch_playlist.dart.
-  static Future<Playlist?> load() async {
-    try {
-      final json =
-          jsonDecode(await rootBundle.loadString('assets/playlist.json'))
-              as Map<String, dynamic>;
-      return Playlist(
-        json['name'] as String,
-        json['owner'] as String? ?? '',
-        json['url'] as String,
-        json['cover'] as String?,
-        [
-          for (final t in (json['tracks'] as List).cast<Map<String, dynamic>>())
-            Track(
-              t['title'] as String,
-              t['artist'] as String,
-              Duration(milliseconds: t['durationMs'] as int? ?? 0),
-              t['preview'] as String?,
-              t['url'] as String,
-            ),
-        ],
-      );
-    } catch (_) {
-      return null;
-    }
-  }
-}
-
-/// Plays 30-second Spotify previews in order. Lives above the panels so the
-/// music keeps going while the visitor looks at other tiles.
-class PlaylistController extends ChangeNotifier {
-  Playlist? playlist;
-  int index = 0;
-  bool playing = false;
-  Duration position = Duration.zero;
-  Duration duration = const Duration(seconds: 30);
-
-  AudioPlayer? _player;
-  final _subs = <StreamSubscription<Object?>>[];
-  bool _disposed = false;
-
-  /// Async work (asset load, audio events) can finish after the hero is
-  /// gone; drop those updates instead of notifying a disposed controller.
-  @override
-  void notifyListeners() {
-    if (!_disposed) super.notifyListeners();
-  }
-
-  Track? get current => playlist?.tracks.elementAtOrNull(index);
-
-  Future<void> load() async {
-    playlist = await Playlist.load();
-    notifyListeners();
-  }
-
-  AudioPlayer _ensurePlayer() {
-    final existing = _player;
-    if (existing != null) return existing;
-    final player = AudioPlayer();
-    _subs.addAll([
-      player.onPositionChanged.listen((p) {
-        position = p;
-        notifyListeners();
-      }),
-      player.onDurationChanged.listen((d) {
-        if (d > Duration.zero) duration = d;
-        notifyListeners();
-      }),
-      player.onPlayerComplete.listen((_) => next()),
-    ]);
-    return _player = player;
-  }
-
-  Future<void> playAt(int i) async {
-    final tracks = playlist?.tracks;
-    if (tracks == null || tracks.isEmpty) return;
-    index = i % tracks.length;
-    final url = tracks[index].preview;
-    if (url == null) return next();
-    position = Duration.zero;
-    playing = true;
-    notifyListeners();
-    try {
-      await _ensurePlayer().play(UrlSource(url));
-    } catch (_) {
-      playing = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> toggle() async {
-    if (playing) {
-      playing = false;
-      notifyListeners();
-      await _player?.pause();
-    } else if (_player != null && position > Duration.zero) {
-      playing = true;
-      notifyListeners();
-      await _player!.resume();
-    } else {
-      await playAt(index);
-    }
-  }
-
-  Future<void> next() => playAt(index + 1);
-  Future<void> previous() => playAt(index - 1);
-
-  @override
-  void dispose() {
-    _disposed = true;
-    for (final s in _subs) {
-      s.cancel();
-    }
-    _player?.dispose();
-    super.dispose();
-  }
-}
 
 class _PlaylistPanel extends StatelessWidget {
   final PlaylistController music;

@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
+import '../services/music.dart';
 import '../services/sfx.dart';
 import '../theme/app_theme.dart';
+import 'now_playing.dart';
 
 class NavLink {
   final String label;
@@ -163,7 +165,8 @@ class _NavTextState extends State<_NavText> {
   }
 }
 
-/// Speaker toggle. Sound is off until the visitor turns it on.
+/// Sound effects toggle (clicks, dings, the sync stamp). Off until the
+/// visitor turns it on. Music is separate: it has its own play button.
 class SoundToggle extends StatelessWidget {
   const SoundToggle({super.key});
 
@@ -172,7 +175,7 @@ class SoundToggle extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: Sfx.enabled,
       builder: (context, on, _) => Tooltip(
-        message: on ? 'Sound on (S)' : 'Sound off (S)',
+        message: on ? 'Sound effects on (S)' : 'Sound effects off (S)',
         child: IconButton(
           onPressed: Sfx.toggle,
           visualDensity: VisualDensity.compact,
@@ -195,6 +198,100 @@ class SoundToggle extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Shows up in the nav while music is playing (or paused mid-song), so the
+/// visitor can stop it from anywhere on the page, not just the hero.
+class NowPlayingPill extends StatelessWidget {
+  const NowPlayingPill({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final music = PlaylistController.instance;
+    final isMobile = AppBreakpoints.isMobile(MediaQuery.sizeOf(context).width);
+
+    return ListenableBuilder(
+      listenable: music,
+      builder: (context, _) {
+        final track = music.current;
+        final show = music.active && track != null;
+
+        return AnimatedSize(
+          duration: AppMotion.big,
+          curve: AppMotion.settle,
+          child: !show
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Tooltip(
+                    message: music.playing ? 'Pause music' : 'Resume music',
+                    child: Semantics(
+                      button: true,
+                      label: music.playing
+                          ? 'Pause ${track.title}'
+                          : 'Resume ${track.title}',
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: music.toggle,
+                          child: Container(
+                            height: 34,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: AppColors.blue.withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: AppColors.blue.withValues(alpha: 0.5),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (music.playing)
+                                  const EqualizerBars(size: 12)
+                                else
+                                  const Icon(
+                                    Icons.music_note_rounded,
+                                    size: 14,
+                                    color: AppColors.textMuted,
+                                  ),
+                                if (!isMobile) ...[
+                                  const SizedBox(width: 8),
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 150,
+                                    ),
+                                    child: Text(
+                                      track.title,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppText.body.copyWith(
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(width: 6),
+                                Icon(
+                                  music.playing
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                  size: 18,
+                                  color: AppColors.text,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+        );
+      },
     );
   }
 }

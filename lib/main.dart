@@ -179,7 +179,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
           NavLink('Writing', () => _scrollTo(_writingKey)),
           NavLink('Contact', () => _scrollTo(_contactKey)),
         ],
-        trailing: const [SoundToggle()],
+        trailing: const [NowPlayingPill(), SoundToggle()],
       ),
       body: CursorSpotlight(
         child: Stack(

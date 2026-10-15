@@ -45,7 +45,7 @@ const _shortcuts = <(List<String>, String)>[
   (['←', '→'], 'Switch project'),
   (['Enter'], 'Jump to the demo'),
   (['E'], 'Email me'),
-  (['S'], 'Sound on / off'),
+  (['S'], 'Sound effects on / off'),
   (['?'], 'This sheet'),
   (['Esc'], 'Close'),
 ];
