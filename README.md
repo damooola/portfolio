@@ -6,7 +6,7 @@ The design borrows from fintech itself: section dividers marked with ₦, a KPI 
 
 ## Sections
 
-**Hero → (01) Ledger → (02) About → (03) Work → (04) Stack → (05) Let's talk**
+Hero → (01) Ledger → (02) About → (03) Work → (04) Stack → (05) Let's talk
 
 - **Ledger:** headline stats, every figure taken from my resume
 - **Work:** three case studies: an offline-first field agent app, a consumer lending app, and an event marketplace
@@ -21,37 +21,37 @@ The design borrows from fintech itself: section dividers marked with ₦, a KPI 
 
 ## Project layout
 
-```
+```text
 lib/
   data/portfolio_data.dart   # all site copy and content: edit this, not the widgets
   theme/app_theme.dart       # colors, type scale, design tokens
   widgets/                   # one file per section and decorative component
 assets/resume.pdf            # resume linked from the contact section
 test/widget_test.dart        # overflow checks at phone, tablet, and desktop widths
-```
+```text
 
 ## Running locally
 
 ```bash
 flutter pub get
 flutter run -d chrome
-```
+```text
 
 Production build:
 
 ```bash
 flutter build web
 python -m http.server 8765 --directory build/web   # then open http://localhost:8765
-```
+```text
 
 ## Tests
 
 ```bash
 flutter analyze
 flutter test
-```
+```text
 
 ## Contact
 
 - GitHub: [@damooola](https://github.com/damooola)
-- Email: damolanelson@gmail.com
+- Email: <damolanelson@gmail.com>
