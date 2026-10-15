@@ -6,6 +6,7 @@ import '../services/chess.dart';
 import '../services/sfx.dart';
 import '../theme/app_theme.dart';
 import 'buttons.dart';
+import 'chess_board.dart';
 import 'responsive_section.dart';
 import 'spotify_embed.dart';
 
@@ -250,15 +251,19 @@ class NowPlayingStrip extends StatefulWidget {
   State<NowPlayingStrip> createState() => _NowPlayingStripState();
 }
 
+enum _Panel { none, player, chess }
+
 class _NowPlayingStripState extends State<NowPlayingStrip> {
-  bool _player = false;
+  /// One panel at a time opens under the tiles: the Spotify player or my
+  /// last chess win.
+  _Panel _panel = _Panel.none;
 
   static final _hasPlaylist =
       SpotifyEmbed.embedUrl(NowPlayingData.spotifyPlaylistUrl) != null;
 
-  void _togglePlayer() {
+  void _toggle(_Panel panel) {
     Sfx.play(Sound.click);
-    setState(() => _player = !_player);
+    setState(() => _panel = _panel == panel ? _Panel.none : panel);
   }
 
   @override
@@ -284,17 +289,7 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
                 for (var i = 0; i < items.length; i++)
                   SizedBox(
                         width: tileWidth,
-                        child: _NowTile(
-                          item: items[i],
-                          isChess: items[i].$1 == 'CHESS',
-                          compact: columns == 2,
-                          playing: _player,
-                          onPlay:
-                              items[i].$3 == Icons.music_note_outlined &&
-                                  _hasPlaylist
-                              ? _togglePlayer
-                              : null,
-                        ),
+                        child: _tile(items[i], compact: columns == 2),
                       )
                       .animate()
                       .fadeIn(delay: (60 * i).ms, duration: 300.ms)
@@ -311,21 +306,230 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
               duration: AppMotion.big,
               curve: AppMotion.settle,
               alignment: Alignment.topLeft,
-              child: _player
-                  ? ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 520),
-                      child: const Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: SpotifyEmbed(
-                          shareUrl: NowPlayingData.spotifyPlaylistUrl,
-                        ),
-                      ),
-                    )
-                  : const SizedBox(width: 0),
+              child: switch (_panel) {
+                _Panel.player => ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: SpotifyEmbed(
+                      shareUrl: NowPlayingData.spotifyPlaylistUrl,
+                    ),
+                  ),
+                ),
+                _Panel.chess => const Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: _LastWinPanel(),
+                ),
+                _Panel.none => const SizedBox(width: 0),
+              },
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _tile((String, String, IconData) item, {required bool compact}) {
+    final isChess = item.$1 == 'CHESS';
+    final isSong = item.$3 == Icons.music_note_outlined && _hasPlaylist;
+    return _NowTile(
+      item: item,
+      isChess: isChess,
+      compact: compact,
+      playing: _panel == (isChess ? _Panel.chess : _Panel.player),
+      onPlay: isChess
+          ? () => _toggle(_Panel.chess)
+          : isSong
+          ? () => _toggle(_Panel.player)
+          : null,
+    );
+  }
+}
+
+/// My most recent Chess.com win: the final position, who it was against
+/// and how it ended, with a link to the full game.
+class _LastWinPanel extends StatelessWidget {
+  const _LastWinPanel();
+
+  static String _date(DateTime d) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return '${d.day} ${months[d.month - 1]} ${d.year}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const profile =
+        'https://www.chess.com/member/${NowPlayingData.chessUsername}';
+    final isMobile = AppBreakpoints.isMobile(MediaQuery.sizeOf(context).width);
+
+    return FutureBuilder(
+      future: Chess.load(NowPlayingData.chessUsername),
+      builder: (context, snap) {
+        final win = snap.data?.lastWin;
+        final Widget body;
+        if (snap.connectionState != ConnectionState.done) {
+          body = const SizedBox(
+            height: 60,
+            child: Center(
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.blue,
+                ),
+              ),
+            ),
+          );
+        } else if (win == null) {
+          body = Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'No recent win to show. The board is a tough place.',
+                  style: AppText.bodyMuted.copyWith(fontSize: 14),
+                ),
+              ),
+              const _ChessLink(label: 'My games', url: profile),
+            ],
+          );
+        } else {
+          final mode =
+              '${win.timeClass[0].toUpperCase()}${win.timeClass.substring(1)}';
+          final side = win.playedWhite ? 'White' : 'Black';
+          final details = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'LAST WIN',
+                style: AppText.monoLabel.copyWith(
+                  fontSize: 10,
+                  color: AppColors.online,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'vs ${win.opponent}',
+                style: AppText.heading.copyWith(fontSize: 20),
+              ),
+              Text(
+                'rated ${win.opponentRating}',
+                style: AppText.mono.copyWith(
+                  fontSize: 12,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Won by ${win.wonBy}, playing $side.',
+                style: AppText.body.copyWith(fontSize: 14, height: 1.4),
+              ),
+              Text(
+                '$mode · ${_date(win.endedAt)}',
+                style: AppText.bodyMuted.copyWith(fontSize: 13, height: 1.4),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _ChessLink(label: 'View game', url: win.url, primary: true),
+                  const _ChessLink(label: 'Profile', url: profile),
+                ],
+              ),
+            ],
+          );
+          final board = ChessBoard(
+            fen: win.fen,
+            size: isMobile ? 220 : 200,
+            flipped: !win.playedWhite,
+          );
+          body = isMobile
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [board, const SizedBox(height: 14), details],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    board,
+                    const SizedBox(width: 20),
+                    Flexible(child: details),
+                  ],
+                );
+        }
+
+        return ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Container(
+            width: isMobile ? double.infinity : null,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.line),
+            ),
+            child: body,
+          ),
+        ).animate().fadeIn(duration: 200.ms);
+      },
+    );
+  }
+}
+
+class _ChessLink extends StatelessWidget {
+  final String label;
+  final String url;
+  final bool primary;
+
+  const _ChessLink({
+    required this.label,
+    required this.url,
+    this.primary = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          Sfx.play(Sound.click);
+          launchUrl(Uri.parse(url), webOnlyWindowName: '_blank');
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: primary ? AppColors.blue : Colors.transparent,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: primary ? AppColors.blue : AppColors.line,
+            ),
+          ),
+          child: Text(
+            '$label ↗',
+            style: AppText.body.copyWith(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -435,7 +639,11 @@ class _NowTileState extends State<_NowTile> {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                widget.playing ? Icons.close_rounded : Icons.play_arrow_rounded,
+                widget.playing
+                    ? Icons.close_rounded
+                    : widget.isChess
+                    ? Icons.expand_more_rounded
+                    : Icons.play_arrow_rounded,
                 size: 18,
                 color: Colors.white,
               ),
@@ -445,34 +653,7 @@ class _NowTileState extends State<_NowTile> {
       ),
     );
 
-    if (widget.isChess) {
-      return Tooltip(
-        message: 'My games on Chess.com',
-        child: Semantics(
-          link: true,
-          label: 'Chess.com profile ${NowPlayingData.chessUsername}',
-          child: MouseRegion(
-            cursor: SystemMouseCursors.click,
-            onEnter: (_) => setState(() => _hover = true),
-            onExit: (_) => setState(() => _hover = false),
-            child: GestureDetector(
-              onTap: () {
-                Sfx.play(Sound.click);
-                launchUrl(
-                  Uri.parse(
-                    'https://www.chess.com/member/${NowPlayingData.chessUsername}',
-                  ),
-                  webOnlyWindowName: '_blank',
-                );
-              },
-              child: tile,
-            ),
-          ),
-        ),
-      );
-    }
-
-    // The song tile toggles the player; the rest just react to hover.
+    // The song and chess tiles open panels; the rest just react to hover.
     if (onPlay == null) {
       return MouseRegion(
         onEnter: (_) => setState(() => _hover = true),
@@ -481,12 +662,18 @@ class _NowTileState extends State<_NowTile> {
       );
     }
     return Tooltip(
-      message: widget.playing ? 'Hide player' : 'Play on Spotify',
+      message: widget.isChess
+          ? (widget.playing ? 'Hide board' : 'See my last win')
+          : (widget.playing ? 'Hide player' : 'Play on Spotify'),
       child: Semantics(
         button: true,
-        label: widget.playing
-            ? 'Hide Spotify player'
-            : 'Play my playlist on Spotify',
+        label: widget.isChess
+            ? (widget.playing
+                  ? 'Hide last chess win'
+                  : 'Show my last chess win')
+            : (widget.playing
+                  ? 'Hide Spotify player'
+                  : 'Play my playlist on Spotify'),
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           onEnter: (_) => setState(() => _hover = true),
