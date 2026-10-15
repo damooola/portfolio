@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'services/sfx.dart';
 import 'theme/app_theme.dart';
+import 'widgets/after_hours_section.dart';
 import 'widgets/career_section.dart';
 import 'widgets/confetti.dart';
 import 'widgets/contact_section.dart';
@@ -12,7 +13,6 @@ import 'widgets/shortcut_sheet.dart';
 import 'widgets/skills_section.dart';
 import 'widgets/spotlight.dart';
 import 'widgets/toast.dart';
-import 'widgets/trophies_section.dart';
 import 'widgets/work_section.dart';
 import 'widgets/writing_section.dart';
 
@@ -66,7 +66,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   final _workKey = GlobalKey();
   final _careerKey = GlobalKey();
   final _skillsKey = GlobalKey();
-  final _trophiesKey = GlobalKey();
+  final _afterHoursKey = GlobalKey();
   final _writingKey = GlobalKey();
   final _contactKey = GlobalKey();
 
@@ -98,7 +98,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
     }
     final target = switch (project != null ? 'work' : fragment) {
       'work' => _workKey,
-      'trophies' => _trophiesKey,
+      'after-hours' || 'trophies' => _afterHoursKey,
       'writing' => _writingKey,
       'skills' => _skillsKey,
       'career' => _careerKey,
@@ -221,8 +221,8 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                   KeyedSubtree(key: _careerKey, child: const CareerSection()),
                   KeyedSubtree(key: _skillsKey, child: const SkillsSection()),
                   KeyedSubtree(
-                    key: _trophiesKey,
-                    child: const TrophiesSection(),
+                    key: _afterHoursKey,
+                    child: const AfterHoursSection(),
                   ),
                   KeyedSubtree(key: _writingKey, child: const WritingSection()),
                   KeyedSubtree(key: _contactKey, child: const ContactSection()),

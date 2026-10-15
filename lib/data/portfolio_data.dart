@@ -179,45 +179,47 @@ class ProjectsData {
   ];
 }
 
-/// Resume stats, shown as console-style achievements.
+/// Resume stats, shown as a compact row in the hero. Hover one for detail.
 class Trophy {
   final String value;
-  final String title;
+
+  /// A few words under the number.
+  final String label;
   final String detail;
 
-  const Trophy(this.value, this.title, this.detail);
+  const Trophy(this.value, this.label, this.detail);
 }
 
 class TrophiesData {
   static const trophies = <Trophy>[
     Trophy(
-      '−40%',
-      'Bug exterminator',
-      'Audited a crypto app\'s codebases and cut crashes by about 40%.',
-    ),
-    Trophy(
-      '−25%',
-      'Crash buster',
-      'Cut app crashes by about 25% on a live lending app.',
-    ),
-    Trophy(
       '+15%',
-      'Smooth onboarding',
+      'onboarding retention',
       'Lifted onboarding retention by about 15% with a redesigned sign-up.',
     ),
     Trophy(
-      '4',
-      'Payment collector',
-      'Integrated Paystack, Flutterwave, Razorpay and Stripe.',
+      '−25%',
+      'crashes, live loan app',
+      'Cut app crashes by about 25% on a live lending app.',
     ),
     Trophy(
       '98%',
-      'Solo build',
+      'of Ajarra\'s commits',
       'Wrote 694 of Ajarra\'s 707 commits, from first screen to both stores.',
     ),
     Trophy(
+      '−40%',
+      'crashes after an audit',
+      'Audited a crypto app\'s codebases and cut crashes by about 40%.',
+    ),
+    Trophy(
+      '4',
+      'payment SDKs shipped',
+      'Integrated Paystack, Flutterwave, Razorpay and Stripe.',
+    ),
+    Trophy(
       '27',
-      'Published author',
+      'posts on Flutter',
       'Posts on Daily Flutters about real Flutter bugs and how I fixed them.',
     ),
   ];

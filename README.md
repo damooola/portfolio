@@ -8,11 +8,11 @@ The concept is **After Hours**: a dark navy room, a soft blue glow that follows 
 
 | Section | What it does |
 | --- | --- |
-| Hero | The name drops in letter by letter, plus a status pill and four "now playing" tiles: live Chess.com rating with my last win on a board, my playlist in a custom preview player, Chelsea's live score and next game, and what I'm learning. Hover to preview, click to pin |
+| Hero | Name, role, status and resume download, plus six headline numbers from my resume |
 | 01 Work | Three projects with live demos in a phone that tilts toward the cursor |
 | 02 Career | Work history, newest first |
 | 03 Skills | A football-game player card that flips to show the attribute bars |
-| 04 Trophies | Resume stats shown as console-style achievements |
+| 04 After hours | Four live tiles: what I'm learning, my Chess.com form, my playlist in a custom player, and Chelsea's last result and next game. Hover to preview, click to pin |
 | 05 Writing | A draggable row of Flutter articles from Hashnode and Coder Legion, plus three personal Medium essays shown on phones |
 | 06 Contact | Click to copy my email, or press **E** |
 
