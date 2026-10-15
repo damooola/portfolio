@@ -1,0 +1,71 @@
+{
+  "name": "Portfolio",
+  "owner": "ayodamola",
+  "url": "https://open.spotify.com/playlist/129dbvsNU8XV8ZGlrrjM3x",
+  "cover": "https://mosaic.scdn.co/640/ab67616d00001e02892abb1ade35b4863b29e051ab67616d00001e02a996b44f11f30c8bf37cf53eab67616d00001e02b6bd44cf06bf8f4d5ce1e080ab67616d00001e02fb4aac6e97e78983ac5f6280",
+  "tracks": [
+    {
+      "title": "Reflections",
+      "artist": "Toshifumi Hinata",
+      "durationMs": 130693,
+      "preview": "https://p.scdn.co/mp3-preview/9e3baeaf9df21cbb46a3e692089ee75e9974ff2b",
+      "url": "https://open.spotify.com/track/5Zf25eS8E1znm9mez4cGsm"
+    },
+    {
+      "title": "Take Five",
+      "artist": "The Dave Brubeck Quartet",
+      "durationMs": 328831,
+      "preview": "https://p.scdn.co/mp3-preview/f2506531b4856d55380d1a9fbaaf3fbc88e46a1a",
+      "url": "https://open.spotify.com/track/1YQWosTIljIvxAgHWTp7KP"
+    },
+    {
+      "title": "Feeling Good",
+      "artist": "Nina Simone",
+      "durationMs": 174000,
+      "preview": "https://p.scdn.co/mp3-preview/fbd1d3c07a28407f4ba1a8924d1048714b44b86f",
+      "url": "https://open.spotify.com/track/6Rqn2GFlmvmV4w9Ala0I1e"
+    },
+    {
+      "title": "Million Little Miracles (feat. Joe L Barnes)",
+      "artist": "Elevation Worship, Maverick City Music, Joe L Barnes",
+      "durationMs": 405513,
+      "preview": "https://p.scdn.co/mp3-preview/abeb0172ed395ce5edd03a68c5707240ad26772c",
+      "url": "https://open.spotify.com/track/2AX4m5yewzlDmzODLJ8Lcz"
+    },
+    {
+      "title": "The Door",
+      "artist": "Teddy Swims",
+      "durationMs": 212648,
+      "preview": "https://p.scdn.co/mp3-preview/0cb117dfad9c53a232ef2fba85ceb04e4ca8e356",
+      "url": "https://open.spotify.com/track/3dj4wgM3cPeuLwMNHDuBon"
+    },
+    {
+      "title": "All Of The Lights",
+      "artist": "Kanye West",
+      "durationMs": 299613,
+      "preview": "https://p.scdn.co/mp3-preview/5225c99f6301a3fbe3bdd9f8af1579ad5416828c",
+      "url": "https://open.spotify.com/track/22L7bfCiAkJo5xGSQgmiIO"
+    },
+    {
+      "title": "Hello",
+      "artist": "Adele",
+      "durationMs": 295502,
+      "preview": "https://p.scdn.co/mp3-preview/27069a2e4ff7be549a241052b7e3233ac835e1f6",
+      "url": "https://open.spotify.com/track/1Yk0cQdMLx5RzzFTYwmuld"
+    },
+    {
+      "title": "Essence (feat. Tems)",
+      "artist": "Wizkid, Tems",
+      "durationMs": 249033,
+      "preview": "https://p.scdn.co/mp3-preview/e039f7c47b164d0271d5b498534567426b8827d7",
+      "url": "https://open.spotify.com/track/5FG7Tl93LdH117jEKYl3Cm"
+    },
+    {
+      "title": "Happier",
+      "artist": "Ed Sheeran",
+      "durationMs": 207520,
+      "preview": "https://p.scdn.co/mp3-preview/f4944de04b857647b920811fae9a1abfb27d7f8b",
+      "url": "https://open.spotify.com/track/2RttW7RAu5nOAfq6YFvApB"
+    }
+  ]
+}

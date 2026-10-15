@@ -5,8 +5,6 @@
 // Every figure in TrophiesData comes straight from the resume PDF. Don't add
 // numbers here that aren't on the resume.
 
-import 'package:flutter/material.dart' show IconData, Icons;
-
 class ProfileData {
   static const name = 'Damola Nelson';
   static const firstName = 'Damola';
@@ -30,27 +28,27 @@ class ProfileData {
   static const resumeAssetPath = 'assets/resume.pdf';
 }
 
-/// The "now playing" tiles in the hero, shown side by side. Hand-edited —
-/// update them whenever you like. Keep the song as the music-note item: it
-/// gets the Spotify play button.
+/// The four "now playing" tiles in the hero. Hover one to preview its
+/// panel; click to pin it open.
 class NowPlayingData {
-  // TODO: the Chelsea result is a placeholder — put in your own.
-  static const items = <(String, String, IconData)>[
-    // Live from Chess.com (see chessUsername); this text shows while loading.
-    ('CHESS', 'On Chess.com', Icons.sports_esports_outlined),
-    ('ON REPEAT', 'My playlist', Icons.music_note_outlined),
-    ('CHELSEA', 'Last result goes here', Icons.sports_soccer_outlined),
-    ('LEARNING', 'Go, one service at a time', Icons.school_outlined),
-  ];
-
-  /// Chess.com username: the chess tile shows my current rating and last
-  /// result, read live from Chess.com's public API.
+  /// Chess.com username: the tile shows my current rating and the panel my
+  /// last win, read live from Chess.com's public API.
   static const chessUsername = 'ay0dam0la';
 
-  /// Spotify share link (Share → Copy link to playlist). The play button on
-  /// the song item opens Spotify's player for it; leave empty to hide it.
+  /// Spotify share link (Share → Copy link to playlist). After changing it,
+  /// run `dart run tool/fetch_playlist.dart` to refresh the tracks.
   static const spotifyPlaylistUrl =
       'https://open.spotify.com/playlist/129dbvsNU8XV8ZGlrrjM3x';
+
+  /// TheSportsDB team id for Chelsea: last result and next fixture, live.
+  static const chelseaTeamId = '133610';
+
+  // TODO: the learning blurb was drafted for you — make it yours.
+  static const learning = 'Go, one service at a time';
+  static const learningDetail =
+      'Writing small Go services to understand the other end of the APIs my '
+      'apps talk to.';
+  static const learningUrl = 'https://github.com/damooola';
 }
 
 enum DemoKind { offlineSync, routeMap, otp }

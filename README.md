@@ -8,7 +8,7 @@ The concept is **After Hours**: a dark navy room, a soft blue glow that follows 
 
 | Section | What it does |
 | --- | --- |
-| Hero | The name drops in letter by letter, plus a status pill and "now playing" tiles (game, song with a Spotify player, Chelsea, learning) |
+| Hero | The name drops in letter by letter, plus a status pill and four "now playing" tiles: live Chess.com rating with my last win on a board, my playlist in a custom preview player, Chelsea's live score and next game, and what I'm learning. Hover to preview, click to pin |
 | 01 Work | Three projects, each with a live demo in a phone that tilts toward the cursor |
 | 02 Skills | A football-game player card that flips to show the attribute bars |
 | 03 Trophies | Resume stats shown as console-style achievements |
@@ -69,6 +69,14 @@ python -m http.server 8765 --directory build/web   # then open http://localhost:
 ```
 
 Deep links like `/#work`, `/#work-2` (opens the second demo) and `/#contact` jump straight to a section.
+
+## Updating the playlist
+
+The music tile plays 30-second previews in the site's own player. After changing the playlist link in `lib/data/portfolio_data.dart`:
+
+```bash
+dart run tool/fetch_playlist.dart
+```
 
 ## Updating articles
 
