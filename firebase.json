@@ -19,7 +19,7 @@
         ]
       },
       {
-        "source": "**/*.@(html|js|mjs|json|wasm)",
+        "source": "**/*.@(html|js|mjs|json|wasm|pdf)",
         "headers": [
           {
             "key": "Cache-Control",
@@ -28,7 +28,7 @@
         ]
       },
       {
-        "source": "**/*.@(png|jpg|jpeg|webp|ico|wav|pdf|ttf|otf|woff|woff2)",
+        "source": "**/*.@(png|jpg|jpeg|webp|ico|wav|ttf|otf|woff|woff2)",
         "headers": [
           {
             "key": "Cache-Control",
