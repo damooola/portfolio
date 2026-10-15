@@ -34,13 +34,18 @@ class ProfileData {
 /// update them whenever you like. Keep the song as the music-note item: it
 /// gets the Spotify play button.
 class NowPlayingData {
-  // TODO: the game and Chelsea result are placeholders — put in your own.
+  // TODO: the Chelsea result is a placeholder — put in your own.
   static const items = <(String, String, IconData)>[
-    ('PLAYING', 'EA SPORTS FC 26', Icons.sports_esports_outlined),
+    // Live from Chess.com (see chessUsername); this text shows while loading.
+    ('CHESS', 'On Chess.com', Icons.sports_esports_outlined),
     ('ON REPEAT', 'My playlist', Icons.music_note_outlined),
     ('CHELSEA', 'Last result goes here', Icons.sports_soccer_outlined),
     ('LEARNING', 'Go, one service at a time', Icons.school_outlined),
   ];
+
+  /// Chess.com username: the chess tile shows my current rating and last
+  /// result, read live from Chess.com's public API.
+  static const chessUsername = 'ay0dam0la';
 
   /// Spotify share link (Share → Copy link to playlist). The play button on
   /// the song item opens Spotify's player for it; leave empty to hide it.

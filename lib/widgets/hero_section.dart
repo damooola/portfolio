@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../data/portfolio_data.dart';
+import '../services/chess.dart';
 import '../services/sfx.dart';
 import '../theme/app_theme.dart';
 import 'buttons.dart';
@@ -284,6 +286,7 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
                         width: tileWidth,
                         child: _NowTile(
                           item: items[i],
+                          isChess: items[i].$1 == 'CHESS',
                           compact: columns == 2,
                           playing: _player,
                           onPlay:
@@ -332,6 +335,10 @@ class _NowTile extends StatefulWidget {
   final bool compact;
   final bool playing;
 
+  /// The chess tile: a knight glyph, a live rating, and a link to my
+  /// Chess.com profile.
+  final bool isChess;
+
   /// Set on the song tile when a playlist is configured.
   final VoidCallback? onPlay;
 
@@ -339,6 +346,7 @@ class _NowTile extends StatefulWidget {
     required this.item,
     required this.compact,
     required this.playing,
+    this.isChess = false,
     this.onPlay,
   });
 
@@ -375,11 +383,21 @@ class _NowTileState extends State<_NowTile> {
               color: AppColors.blueDeep,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              icon,
-              size: widget.compact ? 16 : 18,
-              color: AppColors.text,
-            ),
+            alignment: Alignment.center,
+            child: widget.isChess
+                ? Text(
+                    '♞',
+                    style: TextStyle(
+                      fontSize: widget.compact ? 18 : 21,
+                      height: 1,
+                      color: AppColors.text,
+                    ),
+                  )
+                : Icon(
+                    icon,
+                    size: widget.compact ? 16 : 18,
+                    color: AppColors.text,
+                  ),
           ),
           SizedBox(width: widget.compact ? 8 : 12),
           Expanded(
@@ -396,16 +414,14 @@ class _NowTileState extends State<_NowTile> {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  value,
-                  maxLines: widget.compact ? 2 : 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.body.copyWith(
-                    fontSize: widget.compact ? 12.5 : 14,
-                    fontWeight: FontWeight.w600,
-                    height: 1.3,
-                  ),
-                ),
+                if (widget.isChess)
+                  FutureBuilder(
+                    future: Chess.load(NowPlayingData.chessUsername),
+                    builder: (context, snap) =>
+                        _value(snap.data?.summary ?? value),
+                  )
+                else
+                  _value(value),
               ],
             ),
           ),
@@ -429,7 +445,34 @@ class _NowTileState extends State<_NowTile> {
       ),
     );
 
-    // Only the song tile is clickable (it toggles the player).
+    if (widget.isChess) {
+      return Tooltip(
+        message: 'My games on Chess.com',
+        child: Semantics(
+          link: true,
+          label: 'Chess.com profile ${NowPlayingData.chessUsername}',
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            onEnter: (_) => setState(() => _hover = true),
+            onExit: (_) => setState(() => _hover = false),
+            child: GestureDetector(
+              onTap: () {
+                Sfx.play(Sound.click);
+                launchUrl(
+                  Uri.parse(
+                    'https://www.chess.com/member/${NowPlayingData.chessUsername}',
+                  ),
+                  webOnlyWindowName: '_blank',
+                );
+              },
+              child: tile,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // The song tile toggles the player; the rest just react to hover.
     if (onPlay == null) {
       return MouseRegion(
         onEnter: (_) => setState(() => _hover = true),
@@ -453,4 +496,19 @@ class _NowTileState extends State<_NowTile> {
       ),
     );
   }
+
+  Widget _value(String text) => AnimatedSwitcher(
+    duration: AppMotion.hover,
+    child: Text(
+      text,
+      key: ValueKey(text),
+      maxLines: widget.compact ? 2 : 1,
+      overflow: TextOverflow.ellipsis,
+      style: AppText.body.copyWith(
+        fontSize: widget.compact ? 12.5 : 14,
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+      ),
+    ),
+  );
 }
