@@ -1,12 +1,11 @@
 {
-    "name": "portfolio",
-    "short_name": "portfolio",
+    "name": "Damola Nelson — Flutter Engineer",
+    "short_name": "Damola Nelson",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#0A0F1E",
+    "theme_color": "#0A0F1E",
+    "description": "Flutter mobile engineer in Lagos. Live demos of offline-first sync, maps and OTP input, all built in Flutter.",
     "prefer_related_applications": false,
     "icons": [
         {
