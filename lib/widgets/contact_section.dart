@@ -28,7 +28,8 @@ class ContactSection extends StatelessWidget {
           const SectionHeader(
             index: '05',
             title: 'Let\'s talk',
-            caption: 'Always happy to talk mobile engineering, fintech, or Go — '
+            caption:
+                'Always happy to talk mobile engineering, fintech, or Go — '
                 'reach out however\'s easiest.',
             onDark: true,
           ),
@@ -85,7 +86,11 @@ class _ContactRow extends StatefulWidget {
   final String value;
   final VoidCallback onTap;
 
-  const _ContactRow({required this.label, required this.value, required this.onTap});
+  const _ContactRow({
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
 
   @override
   State<_ContactRow> createState() => _ContactRowState();

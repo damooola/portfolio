@@ -28,7 +28,9 @@ class WorkSection extends StatelessWidget {
             // Receipts alternate sides and tilt slightly, like they've been
             // pinned to a board. Straight and full-width on phones.
             Align(
-              alignment: isMobile || i.isEven ? Alignment.centerLeft : Alignment.centerRight,
+              alignment: isMobile || i.isEven
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 720),
                 child: Transform.rotate(
@@ -118,7 +120,10 @@ class _ReceiptState extends State<_Receipt> {
                 style: AppText.heading.copyWith(fontSize: isMobile ? 24 : 30),
               ),
               const SizedBox(height: AppSpacing.xs),
-              Text(project.description, style: AppText.bodyMuted.copyWith(fontSize: 16)),
+              Text(
+                project.description,
+                style: AppText.bodyMuted.copyWith(fontSize: 16),
+              ),
               const SizedBox(height: AppSpacing.md),
               const DashedDivider(),
               const SizedBox(height: AppSpacing.md),
@@ -134,7 +139,10 @@ class _ReceiptState extends State<_Receipt> {
                           padding: const EdgeInsets.only(top: 3),
                           child: Text(
                             (i + 1).toString().padLeft(2, '0'),
-                            style: AppText.mono.copyWith(fontSize: 13, color: AppColors.blue),
+                            style: AppText.mono.copyWith(
+                              fontSize: 13,
+                              color: AppColors.blue,
+                            ),
                           ),
                         ),
                       ),
@@ -167,7 +175,9 @@ class _ReceiptState extends State<_Receipt> {
                 child: SizedBox(
                   width: 180,
                   height: 34,
-                  child: CustomPaint(painter: _BarcodePainter(seed: project.title)),
+                  child: CustomPaint(
+                    painter: _BarcodePainter(seed: project.title),
+                  ),
                 ),
               ),
             ],
@@ -196,9 +206,15 @@ class ReceiptBorder extends ShapeBorder {
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
     final path = Path()
       ..moveTo(rect.left, rect.top + radius)
-      ..arcToPoint(Offset(rect.left + radius, rect.top), radius: Radius.circular(radius))
+      ..arcToPoint(
+        Offset(rect.left + radius, rect.top),
+        radius: Radius.circular(radius),
+      )
       ..lineTo(rect.right - radius, rect.top)
-      ..arcToPoint(Offset(rect.right, rect.top + radius), radius: Radius.circular(radius))
+      ..arcToPoint(
+        Offset(rect.right, rect.top + radius),
+        radius: Radius.circular(radius),
+      )
       ..lineTo(rect.right, rect.bottom - tooth);
 
     final teeth = math.max(1, (rect.width / (tooth * 2)).floor());
@@ -216,7 +232,8 @@ class ReceiptBorder extends ShapeBorder {
   void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
 
   @override
-  ShapeBorder scale(double t) => ReceiptBorder(tooth: tooth * t, radius: radius * t);
+  ShapeBorder scale(double t) =>
+      ReceiptBorder(tooth: tooth * t, radius: radius * t);
 }
 
 /// Decorative barcode. Bar widths are derived from [seed] so each receipt

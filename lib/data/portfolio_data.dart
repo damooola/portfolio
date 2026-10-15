@@ -9,30 +9,17 @@ import 'package:flutter/material.dart' show IconData, Icons;
 
 class ProfileData {
   static const name = 'Damola Nelson';
+  static const firstName = 'Damola';
+  static const lastName = 'Nelson';
+  static const initials = 'DN';
   static const title = 'Flutter Mobile Engineer';
-  static const heroEyebrow = 'MOBILE ENGINEER — LAGOS, NG';
-  static const heroGreeting = 'Hi, I\'m Damola.';
+  static const role = 'Flutter mobile engineer in Lagos.';
+  static const status = 'Online — building offline-first apps';
 
-  // TODO: tagline and about were drafted for you — rewrite in your own voice.
+  // TODO: tagline was drafted for you — rewrite in your own voice.
   static const tagline =
-      'I build mobile apps people trust with their money. Right now that\'s '
-      'lending at a microfinance bank — and on the side I\'m learning Go, '
-      'to understand the other end of the API.';
-
-  static const about =
-      'I studied Electrical & Electronics Engineering at OAU and have been '
-      'shipping Flutter apps professionally since 2024 — travel, crypto, '
-      'hospitality, and now lending. The parts of fintech I care about most '
-      'are the ones that never make the demo: an app that still works on a '
-      'bad network, data that stays safe on a lost phone, and code that '
-      'survives contact with real customers.';
-
-  static const facts = <(String, String)>[
-    ('BASED IN', 'Lagos, Nigeria'),
-    ('CURRENTLY', 'Mobile @ Neocash'),
-    ('STUDIED', 'EEE, OAU \'25'),
-    ('LEARNING', 'Go'),
-  ];
+      'I build apps that keep working when the network doesn\'t, and I sweat '
+      'the small stuff: the OTP box, the retry, the half-second of feedback.';
 
   // TODO: swap the LinkedIn placeholder for your real profile URL.
   static const githubUrl = 'https://github.com/damooola';
@@ -40,6 +27,18 @@ class ProfileData {
   static const linkedinUrl = 'https://www.linkedin.com/in/YOUR-LINKEDIN-HERE';
   static const email = 'damolanelson@gmail.com';
   static const resumeAssetPath = 'assets/resume.pdf';
+}
+
+/// The "now playing" strip in the hero. Hand-edited — update it whenever
+/// you like. Clicking the strip cycles through these in order.
+class NowPlayingData {
+  // TODO: these are placeholders — put in your real game, song and score.
+  static const items = <(String, String, IconData)>[
+    ('PLAYING', 'EA SPORTS FC 26', Icons.sports_esports_outlined),
+    ('ON REPEAT', 'Add your song here', Icons.music_note_outlined),
+    ('CHELSEA', 'Last result goes here', Icons.sports_soccer_outlined),
+    ('LEARNING', 'Go, one service at a time', Icons.school_outlined),
+  ];
 }
 
 enum StatTrend { up, down }
@@ -63,21 +62,24 @@ class StatsData {
     Stat(
       label: 'CRASH RATE',
       value: '~25%',
-      caption: 'fewer app crashes after architecture and performance work '
+      caption:
+          'fewer app crashes after architecture and performance work '
           'on a live lending app.',
       trend: StatTrend.down,
     ),
     Stat(
       label: 'RETENTION',
       value: '~15%',
-      caption: 'better onboarding retention after redesigning the whole '
+      caption:
+          'better onboarding retention after redesigning the whole '
           'sign-up flow.',
       trend: StatTrend.up,
     ),
     Stat(
       label: 'GATEWAYS',
       value: '04',
-      caption: 'payment gateways integrated — Paystack, Flutterwave, '
+      caption:
+          'payment gateways integrated — Paystack, Flutterwave, '
           'Razorpay and Stripe.',
     ),
     Stat(
@@ -207,9 +209,6 @@ class SkillsData {
       label: 'Payments',
       items: ['Paystack', 'Flutterwave', 'Razorpay', 'Stripe'],
     ),
-    SkillGroup(
-      label: 'Tooling',
-      items: ['Git', 'CI/CD', 'Fastlane', 'Figma'],
-    ),
+    SkillGroup(label: 'Tooling', items: ['Git', 'CI/CD', 'Fastlane', 'Figma']),
   ];
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
-import 'widgets/about_section.dart';
 import 'widgets/contact_section.dart';
 import 'widgets/hero_section.dart';
 import 'widgets/nav_bar.dart';
 import 'widgets/scroll_meter.dart';
 import 'widgets/skills_section.dart';
+import 'widgets/spotlight.dart';
 import 'widgets/stats_section.dart';
 import 'widgets/work_section.dart';
 
@@ -36,8 +36,8 @@ class PortfolioHome extends StatefulWidget {
 
 class _PortfolioHomeState extends State<PortfolioHome> {
   final _scrollController = ScrollController();
-  final _aboutKey = GlobalKey();
   final _workKey = GlobalKey();
+  final _skillsKey = GlobalKey();
   final _contactKey = GlobalKey();
 
   @override
@@ -51,46 +51,58 @@ class _PortfolioHomeState extends State<PortfolioHome> {
     if (ctx != null) {
       Scrollable.ensureVisible(
         ctx,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOutCubic,
       );
     }
   }
 
+  void _scrollToTop() => _scrollController.animateTo(
+    0,
+    duration: const Duration(milliseconds: 600),
+    curve: Curves.easeInOutCubic,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.night,
+      extendBodyBehindAppBar: true,
       appBar: NavBar(
-        onAbout: () => _scrollTo(_aboutKey),
-        onWork: () => _scrollTo(_workKey),
-        onContact: () => _scrollTo(_contactKey),
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              children: [
-                HeroSection(
-                  onViewWork: () => _scrollTo(_workKey),
-                  onContact: () => _scrollTo(_contactKey),
-                ),
-                const StatsSection(),
-                KeyedSubtree(key: _aboutKey, child: const AboutSection()),
-                KeyedSubtree(key: _workKey, child: const WorkSection()),
-                const SkillsSection(),
-                KeyedSubtree(key: _contactKey, child: const ContactSection()),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: ScrollProgressBar(controller: _scrollController),
-          ),
+        onHome: _scrollToTop,
+        links: [
+          NavLink('Work', () => _scrollTo(_workKey)),
+          NavLink('Skills', () => _scrollTo(_skillsKey)),
+          NavLink('Contact', () => _scrollTo(_contactKey)),
         ],
+      ),
+      body: CursorSpotlight(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  const SizedBox(height: 68),
+                  HeroSection(
+                    onViewWork: () => _scrollTo(_workKey),
+                    onContact: () => _scrollTo(_contactKey),
+                  ),
+                  KeyedSubtree(key: _workKey, child: const WorkSection()),
+                  KeyedSubtree(key: _skillsKey, child: const SkillsSection()),
+                  const StatsSection(),
+                  KeyedSubtree(key: _contactKey, child: const ContactSection()),
+                ],
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.paddingOf(context).top + 68,
+              left: 0,
+              right: 0,
+              child: ScrollProgressBar(controller: _scrollController),
+            ),
+          ],
+        ),
       ),
     );
   }

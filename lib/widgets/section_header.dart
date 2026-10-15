@@ -23,10 +23,12 @@ class SectionHeader extends StatelessWidget {
     final size = AppBreakpoints.isMobile(width)
         ? 56.0
         : AppBreakpoints.isDesktop(width)
-            ? 128.0
-            : 88.0;
+        ? 128.0
+        : 88.0;
     final ink = onDark ? AppColors.night : AppColors.text;
-    final rule = onDark ? AppColors.night.withValues(alpha: 0.25) : AppColors.line;
+    final rule = onDark
+        ? AppColors.night.withValues(alpha: 0.25)
+        : AppColors.line;
     final accent = onDark ? AppColors.blue : AppColors.blue;
 
     return Column(
@@ -38,7 +40,10 @@ class SectionHeader extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Expanded(child: Container(height: 1, color: rule)),
             const SizedBox(width: AppSpacing.sm),
-            Text('₦', style: AppText.mono.copyWith(color: accent, fontSize: 14)),
+            Text(
+              '₦',
+              style: AppText.mono.copyWith(color: accent, fontSize: 14),
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
@@ -63,7 +68,9 @@ class SectionHeader extends StatelessWidget {
               caption!,
               style: AppText.body.copyWith(
                 fontSize: 17,
-                color: onDark ? AppColors.night.withValues(alpha: 0.8) : AppColors.textMuted,
+                color: onDark
+                    ? AppColors.night.withValues(alpha: 0.8)
+                    : AppColors.textMuted,
               ),
             ),
           ),

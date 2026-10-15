@@ -62,7 +62,9 @@ class DotLeaderRow extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) => Row(
           children: [
-            Flexible(child: Text(label, style: labelStyle ?? AppText.monoLabel)),
+            Flexible(
+              child: Text(label, style: labelStyle ?? AppText.monoLabel),
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: SizedBox(
@@ -76,8 +78,12 @@ class DotLeaderRow extends StatelessWidget {
               child: Text(
                 value,
                 textAlign: TextAlign.right,
-                style: valueStyle ??
-                    AppText.body.copyWith(fontSize: 15, fontWeight: FontWeight.w500),
+                style:
+                    valueStyle ??
+                    AppText.body.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
             ),
           ],

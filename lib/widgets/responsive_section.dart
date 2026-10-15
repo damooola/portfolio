@@ -26,7 +26,7 @@ class ResponsiveSection extends StatelessWidget {
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: contentWidth),
-          child: child,
+          child: SizedBox(width: double.infinity, child: child),
         ),
       ),
     );

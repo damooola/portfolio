@@ -17,7 +17,8 @@ class StatsSection extends StatelessWidget {
           const SectionHeader(
             index: '01',
             title: 'Ledger',
-            caption: 'A few figures from apps I\'ve shipped. Rounded, never inflated.',
+            caption:
+                'A few figures from apps I\'ve shipped. Rounded, never inflated.',
           ),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -30,7 +31,10 @@ class StatsSection extends StatelessWidget {
                 runSpacing: gap,
                 children: [
                   for (final stat in StatsData.stats)
-                    SizedBox(width: tileWidth, child: _StatTile(stat: stat)),
+                    SizedBox(
+                      width: tileWidth,
+                      child: _StatTile(stat: stat),
+                    ),
                 ],
               );
             },
@@ -72,7 +76,11 @@ class _StatTile extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               stat.value,
-              style: AppText.mono.copyWith(fontSize: 52, height: 1, letterSpacing: -1),
+              style: AppText.mono.copyWith(
+                fontSize: 52,
+                height: 1,
+                letterSpacing: -1,
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),

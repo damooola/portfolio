@@ -44,8 +44,7 @@ class AppBreakpoints {
   static bool isDesktop(double width) => width >= desktop;
 
   /// Max content width so text doesn't stretch edge-to-edge on wide screens.
-  static double contentWidth(double width) =>
-      width < desktop ? width : desktop;
+  static double contentWidth(double width) => width < desktop ? width : desktop;
 }
 
 /// Springy, physical motion. Hovers are quick; big moves overshoot a little.
@@ -69,45 +68,45 @@ class AppText {
 
   /// Hero name, section titles, player-card rating.
   static TextStyle get display => GoogleFonts.bricolageGrotesque(
-        color: AppColors.text,
-        fontWeight: FontWeight.w800,
-        height: 1.0,
-        letterSpacing: -0.5,
-      );
+    color: AppColors.text,
+    fontWeight: FontWeight.w800,
+    height: 1.0,
+    letterSpacing: -0.5,
+  );
 
   static TextStyle get heading => GoogleFonts.bricolageGrotesque(
-        color: AppColors.text,
-        fontWeight: FontWeight.w700,
-        height: 1.15,
-      );
+    color: AppColors.text,
+    fontWeight: FontWeight.w700,
+    height: 1.15,
+  );
 
   static TextStyle get body => GoogleFonts.geist(
-        color: AppColors.text,
-        fontWeight: FontWeight.w400,
-        height: 1.6,
-      );
+    color: AppColors.text,
+    fontWeight: FontWeight.w400,
+    height: 1.6,
+  );
 
   static TextStyle get bodyMuted => GoogleFonts.geist(
-        color: AppColors.textMuted,
-        fontWeight: FontWeight.w400,
-        height: 1.6,
-      );
+    color: AppColors.textMuted,
+    fontWeight: FontWeight.w400,
+    height: 1.6,
+  );
 
   /// Numbers and status lines. Tabular digits so figures line up.
   static TextStyle get mono => GoogleFonts.geistMono(
-        color: AppColors.text,
-        fontWeight: FontWeight.w500,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      );
+    color: AppColors.text,
+    fontWeight: FontWeight.w500,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
 
   /// Small all-caps labels: section indexes, card fields, key hints.
   static TextStyle get monoLabel => GoogleFonts.geistMono(
-        color: AppColors.textMuted,
-        fontWeight: FontWeight.w500,
-        fontSize: 12,
-        letterSpacing: 1.2,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      );
+    color: AppColors.textMuted,
+    fontWeight: FontWeight.w500,
+    fontSize: 12,
+    letterSpacing: 1.2,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
 }
 
 ThemeData buildAppTheme() {

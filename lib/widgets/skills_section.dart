@@ -16,7 +16,8 @@ class SkillsSection extends StatelessWidget {
           const SectionHeader(
             index: '04',
             title: 'Stack',
-            caption: 'What I reach for every day, and what I\'m still learning.',
+            caption:
+                'What I reach for every day, and what I\'m still learning.',
           ),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -29,7 +30,10 @@ class SkillsSection extends StatelessWidget {
                 runSpacing: gap,
                 children: [
                   for (final group in SkillsData.groups)
-                    SizedBox(width: colWidth, child: _SkillGroupColumn(group: group)),
+                    SizedBox(
+                      width: colWidth,
+                      child: _SkillGroupColumn(group: group),
+                    ),
                 ],
               );
             },
@@ -67,12 +71,18 @@ class _SkillGroupColumn extends StatelessWidget {
                 Expanded(
                   child: Text(
                     item,
-                    style: AppText.body.copyWith(fontSize: 17, fontWeight: FontWeight.w500),
+                    style: AppText.body.copyWith(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 if (SkillsData.learning.contains(item))
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.blue.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(999),
