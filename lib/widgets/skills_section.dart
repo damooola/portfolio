@@ -222,108 +222,121 @@ class _CardFront extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 22, 24, 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+            // Scales down rather than overflowing if text renders larger
+            // than expected (bigger fonts, user zoom).
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: PlayerCard.width - 48,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        GestureDetector(
-                          onDoubleTap: onRatingDoubleTap,
-                          child: Text(
-                            '${PlayerCardData.overall}',
-                            style: AppText.display.copyWith(
-                              fontSize: 64,
-                              height: 0.9,
-                              color: white,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onDoubleTap: onRatingDoubleTap,
+                              child: Text(
+                                '${PlayerCardData.overall}',
+                                style: AppText.display.copyWith(
+                                  fontSize: 64,
+                                  height: 0.9,
+                                  color: white,
+                                ),
+                              ),
                             ),
+                            Text(
+                              PlayerCardData.position,
+                              style: AppText.display.copyWith(
+                                fontSize: 22,
+                                color: white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              PlayerCardData.role.toUpperCase(),
+                              style: AppText.monoLabel.copyWith(
+                                fontSize: 10,
+                                color: white.withValues(alpha: 0.75),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            _Badge(PlayerCardData.nation),
+                            const SizedBox(height: 6),
+                            _Badge(PlayerCardData.club.toUpperCase()),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 22),
+                    Center(
+                      child: Container(
+                        width: 92,
+                        height: 92,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: white.withValues(alpha: 0.08),
+                          border: Border.all(
+                            color: white.withValues(alpha: 0.3),
+                            width: 1.5,
                           ),
                         ),
-                        Text(
-                          PlayerCardData.position,
+                        child: Text(
+                          ProfileData.initials,
                           style: AppText.display.copyWith(
-                            fontSize: 22,
+                            fontSize: 36,
                             color: white,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          PlayerCardData.role.toUpperCase(),
-                          style: AppText.monoLabel.copyWith(
-                            fontSize: 10,
-                            color: white.withValues(alpha: 0.75),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                    const Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        _Badge(PlayerCardData.nation),
-                        const SizedBox(height: 6),
-                        _Badge(PlayerCardData.club.toUpperCase()),
-                      ],
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Text(
+                        ProfileData.lastName.toUpperCase(),
+                        style: AppText.display.copyWith(
+                          fontSize: 28,
+                          letterSpacing: 1,
+                          color: white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(height: 1, color: white.withValues(alpha: 0.25)),
+                    const SizedBox(height: 10),
+                    AnimatedSwitcher(
+                      duration: AppMotion.hover,
+                      child: showForm
+                          ? _FormStrip(key: const ValueKey('form'))
+                          : _AttrGrid(
+                              key: const ValueKey('attrs'),
+                              attrs: attrs,
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        'TAP TO FLIP',
+                        style: AppText.monoLabel.copyWith(
+                          fontSize: 9,
+                          color: white.withValues(alpha: 0.55),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                const Spacer(),
-                Center(
-                  child: Container(
-                    width: 92,
-                    height: 92,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: white.withValues(alpha: 0.08),
-                      border: Border.all(
-                        color: white.withValues(alpha: 0.3),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Text(
-                      ProfileData.initials,
-                      style: AppText.display.copyWith(
-                        fontSize: 36,
-                        color: white,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Center(
-                  child: Text(
-                    ProfileData.lastName.toUpperCase(),
-                    style: AppText.display.copyWith(
-                      fontSize: 28,
-                      letterSpacing: 1,
-                      color: white,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Container(height: 1, color: white.withValues(alpha: 0.25)),
-                const SizedBox(height: 10),
-                AnimatedSwitcher(
-                  duration: AppMotion.hover,
-                  child: showForm
-                      ? _FormStrip(key: const ValueKey('form'))
-                      : _AttrGrid(key: const ValueKey('attrs'), attrs: attrs),
-                ),
-                const Spacer(),
-                Center(
-                  child: Text(
-                    'TAP TO FLIP',
-                    style: AppText.monoLabel.copyWith(
-                      fontSize: 9,
-                      color: white.withValues(alpha: 0.55),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],

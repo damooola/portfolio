@@ -1,1 +1,213 @@
-[]
+[
+  {
+    "title": "Designing a Scalable, High-Performance Real-Time Social Feed with Flutter",
+    "url": "https://daily-flutters.hashnode.dev/designing-a-scalable-high-performance-real-time-social-feed-with-flutter",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "A real-time social feed sounds simple until it becomes the main surface of a product. At first, it looks like a list of posts. A user opens the app, sees property listings,…",
+    "readMinutes": 10,
+    "date": "2026-08-26"
+  },
+  {
+    "title": "The Share Sheet Wanted Coordinates",
+    "url": "https://daily-flutters.hashnode.dev/the-share-sheet-wanted-coordinates",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Some bugs announce themselves like a backend outage. Others quietly show up as a snack bar with a deeply platform-specific complaint that makes you stare at the screen for a few…",
+    "readMinutes": 5,
+    "date": "2026-06-02"
+  },
+  {
+    "title": "The OTP Boxes That Would Not Let Go",
+    "url": "https://daily-flutters.hashnode.dev/the-otp-boxes-that-would-not-let-go",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Some tasks arrive looking like tiny UX polish and then quietly open a trapdoor under your afternoon. Today’s one was simple on paper: after a user enters a wrong one-time…",
+    "readMinutes": 6,
+    "date": "2026-06-01"
+  },
+  {
+    "title": "The Logo Wasn't Stretched. Flutter Was Just Being Literal.",
+    "url": "https://daily-flutters.hashnode.dev/the-logo-wasn-t-stretched-flutter-was-just-being-literal",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today started with one of those design QA comments that looks tiny from the outside: The logo looks stretched. That was it. A small visual issue on an onboarding-style screen. No…",
+    "readMinutes": 7,
+    "date": "2026-05-30"
+  },
+  {
+    "title": "The Day a Text Cursor Fought the Keyboard",
+    "url": "https://daily-flutters.hashnode.dev/the-day-a-text-cursor-fought-the-keyboard",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "I spent part of today chasing a bug that sounded almost too small to be interesting: “When you highlight text in chat, moving the cursor is impossible. The keyboard just closes.”…",
+    "readMinutes": 4,
+    "date": "2026-05-19"
+  },
+  {
+    "title": "The Quiet Work Behind a Flutter Endpoint",
+    "url": "https://daily-flutters.hashnode.dev/the-quiet-work-behind-a-flutter-endpoint",
+    "platform": "Hashnode",
+    "alsoOn": [
+      "Coder Legion"
+    ],
+    "snippet": "In a real app, an endpoint is rarely just an endpoint. It is a tiny agreement between the backend, the network client, the request model, the repository, the use case, the UI…",
+    "readMinutes": 6,
+    "date": "2026-05-18"
+  },
+  {
+    "title": "The Notification Tap Was Supposed to Be Simple",
+    "url": "https://daily-flutters.hashnode.dev/the-notification-tap-was-supposed-to-be-simple",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today I worked on something that sounded almost suspiciously reasonable: When a user taps a notification, take them to the thing the notification is about. That is the kind of…",
+    "readMinutes": 7,
+    "date": "2026-05-16"
+  },
+  {
+    "title": "The Day White Became a Bug",
+    "url": "https://coderlegion.com/17769/the-day-white-became-a-bug",
+    "platform": "Coder Legion",
+    "alsoOn": [],
+    "snippet": "Today started with one of those tasks that looks almost too small to deserve a branch: prepare the Flutter app for dark mode by making sure colors are centralized. Simple enough,…",
+    "readMinutes": 6,
+    "date": "2026-05-13"
+  },
+  {
+    "title": "The Day a Filename Wasn't a Filename",
+    "url": "https://daily-flutters.hashnode.dev/the-day-a-filename-wasn-t-a-filename",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "I spent part of today working on a payout setup flow, which sounds harmless enough until the UI starts confidently showing a database-looking string where a human-readable…",
+    "readMinutes": 6,
+    "date": "2026-05-11"
+  },
+  {
+    "title": "The Dashboard Flag That Picked the Wrong Moment",
+    "url": "https://daily-flutters.hashnode.dev/the-dashboard-flag-that-picked-the-wrong-moment",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today Flutter did that thing where the line of code that looks the most harmless becomes the one wearing the red jacket in the stack trace. It was not a new feature. It was not a…",
+    "readMinutes": 7,
+    "date": "2026-05-08"
+  },
+  {
+    "title": "The Loan List That Wouldn't Admit It Changed",
+    "url": "https://daily-flutters.hashnode.dev/the-loan-list-that-wouldn-t-admit-it-changed",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today I spent a suspicious amount of time with a list that refused to admit anything had happened. The user could upload a document against one bad loan, get the success screen,…",
+    "readMinutes": 6,
+    "date": "2026-05-07"
+  },
+  {
+    "title": "When a Button Should Do More Than Close",
+    "url": "https://coderlegion.com/16983/when-a-button-should-do-more-than-close",
+    "platform": "Coder Legion",
+    "alsoOn": [],
+    "snippet": "Some days in Flutter are not about huge refactors or dramatic crashes. Some days are about a button that says one thing and does another. Today’s task looked harmless: clean up a…",
+    "readMinutes": 7,
+    "date": "2026-05-07"
+  },
+  {
+    "title": "The Small Screen Before the Real Screen",
+    "url": "https://daily-flutters.hashnode.dev/the-small-screen-before-the-real-screen",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today’s task started with one of those deceptively small product notes: users can have more than one issue, so show them a list first . That sentence sounds harmless until you…",
+    "readMinutes": 5,
+    "date": "2026-05-06"
+  },
+  {
+    "title": "The Selfie Was Fine. The Pixels Were Sideways.",
+    "url": "https://daily-flutters.hashnode.dev/the-selfie-was-fine-the-pixels-were-sideways",
+    "platform": "Hashnode",
+    "alsoOn": [
+      "Coder Legion"
+    ],
+    "snippet": "I spent part of today staring at a selfie that looked completely normal in the app until it became a profile photo. That sentence sounds harmless. It was not harmless. The face…",
+    "readMinutes": 7,
+    "date": "2026-05-05"
+  },
+  {
+    "title": "The Day My Mobile Logs Started Talking Back",
+    "url": "https://daily-flutters.hashnode.dev/the-day-my-mobile-logs-started-talking-back",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Some days the work is not glamorous. No new screen. No shiny animation. No satisfying \"feature complete\" moment. Today was me, a Flutter app, and a pile of zipped mobile logs that…",
+    "readMinutes": 7,
+    "date": "2026-05-04"
+  },
+  {
+    "title": "The Day Search Wasn't Just Search",
+    "url": "https://coderlegion.com/16338/the-day-search-wasnt-just-search",
+    "platform": "Coder Legion",
+    "alsoOn": [],
+    "snippet": "Some tasks arrive wearing a tiny hat. Today’s was: “inspect the vendor search screen.” Simple enough. Search screen, endpoint response, pagination, a couple of screenshots.…",
+    "readMinutes": 6,
+    "date": "2026-05-01"
+  },
+  {
+    "title": "A KYC Flow With a Memory of Signup",
+    "url": "https://daily-flutters.hashnode.dev/a-kyc-flow-with-a-memory-of-signup",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "There are days when Flutter feels wonderfully composable, and there are days when it politely reminds you that reused UI is never just reused UI. Today was the second kind. I was…",
+    "readMinutes": 6,
+    "date": "2026-04-24"
+  },
+  {
+    "title": "The Avatar Wasn't the Bug",
+    "url": "https://daily-flutters.hashnode.dev/the-avatar-wasn-t-the-bug",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today's bug looked almost disrespectfully small. A profile photo wasn't showing on the dashboard. That was it. Not a crash. Not a red screen. Not even a dramatic failure. Just a…",
+    "readMinutes": 6,
+    "date": "2026-04-23"
+  },
+  {
+    "title": "A Small Backend Change Sent Me Through Three Different Flutter Problems",
+    "url": "https://daily-flutters.hashnode.dev/a-small-backend-change-sent-me-through-three-different-flutter-problems",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Some engineering days are clean. You get a ticket, update a request body, run the app, and move on with your life. This was not one of those days. I started with what looked like…",
+    "readMinutes": 6,
+    "date": "2026-04-21"
+  },
+  {
+    "title": "The Tiny Red Dot That Wasn't Tiny",
+    "url": "https://daily-flutters.hashnode.dev/the-tiny-red-dot-that-wasn-t-tiny",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today’s task looked harmless from the outside: show unread notifications, let users mark them as seen, and put a red dot on the bell icon when there is something new. Classic…",
+    "readMinutes": 7,
+    "date": "2026-04-18"
+  },
+  {
+    "title": "The Message That Was There, But Not There",
+    "url": "https://daily-flutters.hashnode.dev/the-message-that-was-there-but-not-there",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today I worked on one of those bugs that sounds suspiciously simple when someone describes it. \"When a new message comes in, the message screen updates. But when I open the chat,…",
+    "readMinutes": 7,
+    "date": "2026-04-16"
+  },
+  {
+    "title": "Images That Vanished, Then Came Back",
+    "url": "https://daily-flutters.hashnode.dev/images-that-vanished-then-came-back",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Today’s Flutter session was about images that vanished, then returned. It turned into a lesson about optimistic state, message reconciliation, and how tiny payload differences…",
+    "readMinutes": 4,
+    "date": "2026-04-15"
+  },
+  {
+    "title": "The Page View That Wasn't a Page View",
+    "url": "https://daily-flutters.hashnode.dev/the-page-view-that-wasn-t-a-page-view",
+    "platform": "Hashnode",
+    "alsoOn": [],
+    "snippet": "Some tasks look like they should be small because the code already has a place for them. Today’s version of that was analytics. The app already had a wrapper. It already accepted…",
+    "readMinutes": 5,
+    "date": "2026-04-14"
+  }
+]

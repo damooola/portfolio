@@ -22,6 +22,23 @@ void main() {
     });
   }
 
+  testWidgets('nav links land on sections and reveal them', (tester) async {
+    await _pumpAt(tester, const Size(1440, 1500));
+    for (final (link, title) in const [
+      ('Skills', 'Player profile'),
+      ('Writing', 'Notes from the desk'),
+      ('Contact', "Let's talk"),
+    ]) {
+      await tester.tap(find.text(link));
+      await _settle(tester);
+      final hidden = find.ancestor(
+        of: find.text(title),
+        matching: find.byWidgetPredicate((w) => w is Opacity && w.opacity == 0),
+      );
+      expect(hidden, findsNothing, reason: '$title should be revealed');
+    }
+  });
+
   testWidgets(
     'keyboard: arrows switch projects, ? opens controls, konami fires',
     (tester) async {

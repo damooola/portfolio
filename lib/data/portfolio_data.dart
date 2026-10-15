@@ -21,10 +21,11 @@ class ProfileData {
       'I build apps that keep working when the network doesn\'t, and I sweat '
       'the small stuff: the OTP box, the retry, the half-second of feedback.';
 
-  // TODO: swap the LinkedIn placeholder for your real profile URL.
   static const githubUrl = 'https://github.com/damooola';
   static const githubHandle = 'damooola';
-  static const linkedinUrl = 'https://www.linkedin.com/in/YOUR-LINKEDIN-HERE';
+  static const linkedinUrl = 'https://www.linkedin.com/in/damola-owonifari';
+  static const behanceUrl = 'https://www.behance.net/damolanelson';
+  static const blogUrl = 'https://daily-flutters.hashnode.dev';
   static const email = 'damolanelson@gmail.com';
   static const resumeAssetPath = 'assets/resume.pdf';
 }
@@ -39,6 +40,10 @@ class NowPlayingData {
     ('CHELSEA', 'Last result goes here', Icons.sports_soccer_outlined),
     ('LEARNING', 'Go, one service at a time', Icons.school_outlined),
   ];
+
+  // TODO: paste a Spotify playlist link (Share → Copy link to playlist).
+  // While it's empty the strip stays hand-edited with no player.
+  static const spotifyPlaylistUrl = '';
 }
 
 enum DemoKind { offlineSync, routeMap, otp }
@@ -109,7 +114,7 @@ class ProjectsData {
     Project(
       name: 'OTP boxes, done properly',
       org: 'Blog post',
-      period: '2026',
+      period: 'JUN 2026',
       summary:
           'Six little boxes that every app gets slightly wrong: focus, paste, '
           'backspace, autofill. I wrote up how to get them right.',
@@ -119,8 +124,9 @@ class ProjectsData {
           'Built for real: one hidden field driving six boxes, so paste, '
           'SMS autofill and backspace behave like any normal input.',
       result: 'Write-up: The OTP Boxes That Would Not Let Go.',
-      // TODO: link the real article URL.
       linkLabel: 'Read the post',
+      linkUrl:
+          'https://daily-flutters.hashnode.dev/the-otp-boxes-that-would-not-let-go',
     ),
   ];
 }
@@ -190,5 +196,54 @@ class PlayerCardData {
     'Swift',
     'Fastlane',
     'Figma',
+  ];
+}
+
+/// Personal essays from Medium, shown as phone screenshots in the Writing
+/// section. Hand-picked; screenshots come from tool/shoot_medium.sh.
+class PersonalPost {
+  final String title;
+  final String subtitle;
+  final String url;
+  final String date;
+  final int readMinutes;
+  final String image;
+
+  const PersonalPost(
+    this.title,
+    this.subtitle,
+    this.url,
+    this.date,
+    this.readMinutes,
+    this.image,
+  );
+}
+
+class PersonalPostsData {
+  static const posts = <PersonalPost>[
+    PersonalPost(
+      'Making the World a Better Place',
+      'Am I really making a difference?',
+      'https://medium.com/wake-write-win/making-the-world-a-better-place-025bda69cc1f',
+      'APR 2024',
+      2,
+      'assets/writing/better-place.jpg',
+    ),
+    PersonalPost(
+      'Do Not Care About What Others Think',
+      'Be your own person',
+      'https://medium.com/new-writers-welcome/do-not-care-about-what-others-think-db9cc3a21b6c',
+      'MAR 2024',
+      2,
+      'assets/writing/what-others-think.jpg',
+    ),
+    PersonalPost(
+      'Is True Happiness an Illusion?',
+      'Can we truly be happy?',
+      'https://medium.com/wake-write-win/is-true-happiness-an-illusion-0a64490a9e9f',
+      'JAN 2024',
+      3,
+      'assets/writing/happiness.jpg',
+    ),
   ];
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../data/portfolio_data.dart';
+import '../services/sfx.dart';
 import '../theme/app_theme.dart';
 import 'buttons.dart';
 import 'responsive_section.dart';
+import 'spotify_embed.dart';
 
 class HeroSection extends StatelessWidget {
   final VoidCallback onViewWork;
@@ -237,6 +239,7 @@ class PulsingDot extends StatelessWidget {
 }
 
 /// A small "now playing" strip. Click to cycle: game, song, Chelsea, learning.
+/// On the song, a play button opens the Spotify playlist player underneath.
 class NowPlayingStrip extends StatefulWidget {
   const NowPlayingStrip({super.key});
 
@@ -247,6 +250,10 @@ class NowPlayingStrip extends StatefulWidget {
 class _NowPlayingStripState extends State<NowPlayingStrip> {
   int _index = 0;
   bool _hover = false;
+  bool _player = false;
+
+  static final _hasPlaylist =
+      SpotifyEmbed.embedUrl(NowPlayingData.spotifyPlaylistUrl) != null;
 
   void _next() =>
       setState(() => _index = (_index + 1) % NowPlayingData.items.length);
@@ -254,7 +261,39 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
   @override
   Widget build(BuildContext context) {
     final (label, value, icon) = NowPlayingData.items[_index];
+    final isSong = icon == Icons.music_note_outlined;
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _strip(label, value, icon, showPlay: isSong && _hasPlaylist),
+        AnimatedSize(
+          duration: AppMotion.big,
+          curve: AppMotion.settle,
+          alignment: Alignment.topLeft,
+          child: _player
+              ? ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: SpotifyEmbed(
+                      shareUrl: NowPlayingData.spotifyPlaylistUrl,
+                    ),
+                  ),
+                )
+              : const SizedBox(width: 0),
+        ),
+      ],
+    );
+  }
+
+  Widget _strip(
+    String label,
+    String value,
+    IconData icon, {
+    required bool showPlay,
+  }) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hover = true),
@@ -325,6 +364,33 @@ class _NowPlayingStripState extends State<NowPlayingStrip> {
                 ),
               ),
               const SizedBox(width: 12),
+              if (showPlay || _player) ...[
+                Tooltip(
+                  message: _player ? 'Hide player' : 'Play on Spotify',
+                  child: GestureDetector(
+                    onTap: () {
+                      Sfx.play(Sound.click);
+                      setState(() => _player = !_player);
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: const BoxDecoration(
+                        color: AppColors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _player
+                            ? Icons.close_rounded
+                            : Icons.play_arrow_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ],
               Text(
                 '${_index + 1}/${NowPlayingData.items.length}',
                 style: AppText.mono.copyWith(

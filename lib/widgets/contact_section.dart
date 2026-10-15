@@ -61,6 +61,18 @@ class ContactSection extends StatelessWidget {
                   onTap: () => open(ProfileData.linkedinUrl),
                 ),
                 _LinkChip(
+                  icon: Icons.edit_note,
+                  label: 'Blog',
+                  detail: 'Hashnode',
+                  onTap: () => open(ProfileData.blogUrl),
+                ),
+                _LinkChip(
+                  icon: Icons.palette_outlined,
+                  label: 'Behance',
+                  detail: 'Design',
+                  onTap: () => open(ProfileData.behanceUrl),
+                ),
+                _LinkChip(
                   icon: Icons.description_outlined,
                   label: 'Resume',
                   detail: 'PDF',

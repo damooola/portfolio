@@ -176,6 +176,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
         links: [
           NavLink('Work', () => _scrollTo(_workKey)),
           NavLink('Skills', () => _scrollTo(_skillsKey)),
+          NavLink('Writing', () => _scrollTo(_writingKey)),
           NavLink('Contact', () => _scrollTo(_contactKey)),
         ],
         trailing: const [SoundToggle()],
