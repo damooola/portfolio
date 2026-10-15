@@ -43,6 +43,7 @@ Future<void> main() async {
     'Coder Legion': () => _fromCoderLegion(coderLegionProfile),
   };
 
+  final previous = await _previousArticles();
   final all = <ArticleJson>[];
   var failures = 0;
   for (final MapEntry(key: platform, value: load) in sources.entries) {
@@ -52,7 +53,16 @@ Future<void> main() async {
       stdout.writeln('$platform: ${found.length} articles');
     } catch (e) {
       failures++;
-      stderr.writeln('$platform: skipped ($e)');
+      // A blocked or broken source shouldn't wipe its posts off the site:
+      // keep what was saved last time.
+      final kept = [
+        for (final a in previous)
+          if (a['platform'] == platform) {...a, 'alsoOn': <String>[]},
+      ];
+      all.addAll(kept);
+      stderr.writeln(
+        '$platform: skipped ($e); keeping ${kept.length} saved articles',
+      );
     }
   }
 
@@ -68,6 +78,16 @@ Future<void> main() async {
     _outPath,
   ).writeAsString('${const JsonEncoder.withIndent('  ').convert(articles)}\n');
   stdout.writeln('Wrote ${articles.length} articles to $_outPath');
+}
+
+/// What's in the output file now, so a failed source can fall back to it.
+Future<List<ArticleJson>> _previousArticles() async {
+  try {
+    final list = jsonDecode(await File(_outPath).readAsString()) as List;
+    return [for (final a in list) Map<String, Object>.from(a as Map)];
+  } catch (_) {
+    return const [];
+  }
 }
 
 Future<String> _get(String url) async {
@@ -161,7 +181,8 @@ List<ArticleJson> _mergeCrossPosts(List<ArticleJson> all) {
     if (existing == null) {
       merged[key(a)] = a;
     } else if (existing['platform'] != a['platform']) {
-      (existing['alsoOn'] as List<String>).add(a['platform'] as String);
+      final alsoOn = existing['alsoOn'] as List<String>;
+      if (!alsoOn.contains(a['platform'])) alsoOn.add(a['platform'] as String);
     }
   }
   return merged.values.toList();

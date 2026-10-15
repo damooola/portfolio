@@ -84,7 +84,13 @@ Deep links like `/#work`, `/#work-2` (opens the second demo) and `/#contact` jum
 
 ## Deploying
 
-Hosted on Firebase Hosting (project `damola-nelson`):
+Hosted on Firebase Hosting (project `damola-nelson`). The GitHub Action in `.github/workflows/deploy.yml`:
+
+- deploys on every push to `main`;
+- every Monday re-fetches the Spotify playlist and blog articles, and commits and redeploys only if something changed;
+- can be run by hand from the Actions tab.
+
+To deploy manually instead:
 
 ```bash
 flutter build web --release

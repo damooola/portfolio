@@ -1,0 +1,94 @@
+name: Deploy
+
+# Builds, tests and deploys the site to Firebase Hosting.
+#  - On every push to main.
+#  - Every Monday, after re-fetching the Spotify playlist and blog articles;
+#    it only commits and redeploys if something actually changed.
+#  - On demand from the Actions tab ("Run workflow").
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC (07:00 in Lagos)
+  workflow_dispatch:
+
+permissions:
+  contents: write # to commit refreshed playlist/articles
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      # Created by `firebase init hosting:github`. Without it, everything
+      # still runs but the deploy step is skipped.
+      HAS_FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAMOLA_NELSON != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.8'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Refresh playlist and articles
+        id: refresh
+        if: github.event_name != 'push'
+        run: |
+          dart run tool/fetch_playlist.dart || echo "::warning::Playlist refresh failed; keeping the saved one."
+          dart run tool/fetch_articles.dart || echo "::warning::Articles refresh failed; keeping the saved ones."
+          if git diff --quiet -- assets/playlist.json assets/articles.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing new on Spotify or the blogs."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- assets/playlist.json assets/articles.json
+          fi
+
+      - name: Commit refreshed content
+        if: steps.refresh.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/playlist.json assets/articles.json
+          git commit -m "chore: refresh playlist and articles"
+          git push
+
+      - name: Decide whether to deploy
+        id: plan
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ steps.refresh.outputs.changed }}" != "true" ]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Analyze and test
+        if: steps.plan.outputs.deploy == 'true'
+        run: |
+          flutter analyze
+          flutter test
+
+      - name: Build
+        if: steps.plan.outputs.deploy == 'true'
+        run: flutter build web --release
+
+      - name: Deploy to Firebase Hosting
+        if: steps.plan.outputs.deploy == 'true' && env.HAS_FIREBASE_SA == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAMOLA_NELSON }}
+          channelId: live
+          projectId: damola-nelson
+
+      - name: Deploy skipped (no Firebase credential yet)
+        if: steps.plan.outputs.deploy == 'true' && env.HAS_FIREBASE_SA != 'true'
+        run: echo "::notice::Run 'firebase init hosting:github' once to add the FIREBASE_SERVICE_ACCOUNT_DAMOLA_NELSON secret."
