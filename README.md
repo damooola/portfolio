@@ -28,28 +28,28 @@ lib/
   widgets/                   # one file per section and decorative component
 assets/resume.pdf            # resume linked from the contact section
 test/widget_test.dart        # overflow checks at phone, tablet, and desktop widths
-```text
+```
 
 ## Running locally
 
 ```bash
 flutter pub get
 flutter run -d chrome
-```text
+```
 
 Production build:
 
 ```bash
 flutter build web
 python -m http.server 8765 --directory build/web   # then open http://localhost:8765
-```text
+```
 
 ## Tests
 
 ```bash
 flutter analyze
 flutter test
-```text
+```
 
 ## Contact
 
