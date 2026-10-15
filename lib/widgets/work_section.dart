@@ -59,8 +59,9 @@ class WorkSection extends StatelessWidget {
                 label: 'Work',
                 title: 'Things I\'ve built',
                 caption:
-                    'Don\'t take my word for it. Each one has a working demo — '
-                    'go ahead and poke it.',
+                    'The real apps belong to the companies I built them for, so '
+                    'these are small working versions I rebuilt for this site. '
+                    'Go ahead and poke them.',
               ),
               if (sideBySide)
                 Row(
