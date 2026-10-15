@@ -75,18 +75,23 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Row(
                     children: [
                       _Monogram(onTap: onHome),
-                      if (scroll != null && heroNameKey != null)
-                        Flexible(
-                          child: _ScrolledName(
-                            scroll: scroll!,
-                            heroNameKey: heroNameKey!,
-                            navBottom:
-                                MediaQuery.paddingOf(context).top +
-                                preferredSize.height,
-                            onTap: onHome,
-                          ),
+                      // The name (when shown) and the gap before the links
+                      // share one slot, so the links stay pinned right.
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: scroll != null && heroNameKey != null
+                              ? _ScrolledName(
+                                  scroll: scroll!,
+                                  heroNameKey: heroNameKey!,
+                                  navBottom:
+                                      MediaQuery.paddingOf(context).top +
+                                      preferredSize.height,
+                                  onTap: onHome,
+                                )
+                              : null,
                         ),
-                      const Spacer(),
+                      ),
                       for (final link in shown) ...[
                         _NavText(link: link),
                         SizedBox(

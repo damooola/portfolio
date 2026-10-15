@@ -1,5 +1,7 @@
 # Damola Nelson — Portfolio
 
+**Live: https://damola-nelson.web.app**
+
 My personal portfolio site, built with **Flutter Web**. I'm a Flutter mobile engineer in Lagos, and instead of listing what I've built, the site lets you use it: every project comes with a working Flutter demo running inside a phone frame.
 
 The concept is **After Hours**: a dark navy room, a soft blue glow that follows the cursor, and small things to pick up and play with. It's a clean portfolio if you only scroll, with extra toys for anyone who pokes around.
@@ -79,6 +81,15 @@ python -m http.server 8765 --directory build/web   # then open http://localhost:
 ```
 
 Deep links like `/#work`, `/#work-2` (opens the second demo) and `/#contact` jump straight to a section.
+
+## Deploying
+
+Hosted on Firebase Hosting (project `damola-nelson`):
+
+```bash
+flutter build web --release
+firebase deploy --only hosting
+```
 
 ## Updating the playlist
 
