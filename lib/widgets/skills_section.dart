@@ -14,18 +14,19 @@ class SkillsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sideBySide =
-        MediaQuery.sizeOf(context).width >= AppBreakpoints.tablet;
+    final width = MediaQuery.sizeOf(context).width;
+    final sideBySide = width >= AppBreakpoints.tablet;
+    final verb = AppBreakpoints.isMobile(width) ? 'Tap' : 'Click';
 
     final intro = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader(
+        SectionHeader(
           index: '03',
           label: 'Skills',
           title: 'Player profile',
           caption:
-              'Click the card to see the stats. They\'re self-rated, so take '
+              '$verb the card to see the stats. They\'re self-rated, so take '
               'them with a pinch of salt. Honestly, I mostly wanted an excuse '
               'to show off a subtle flip animation.',
         ),

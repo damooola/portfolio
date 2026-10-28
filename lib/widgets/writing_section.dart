@@ -132,6 +132,25 @@ class _WritingSectionState extends State<WritingSection> {
                       final width =
                           ((box.maxWidth - gap * (columns - 1)) / columns)
                               .floorToDouble();
+                      // Phones: one swipeable row with the next card peeking
+                      // in, instead of six full-height cards stacked.
+                      if (columns == 1) {
+                        final cardWidth = (box.maxWidth * 0.86).floorToDouble();
+                        return SizedBox(
+                          height: 264,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            itemCount: shown.length,
+                            separatorBuilder: (_, _) => const SizedBox(width: gap),
+                            itemBuilder: (_, i) => _ArticleCard(
+                              key: ValueKey(shown[i].url),
+                              article: shown[i],
+                              width: cardWidth,
+                            ),
+                          ),
+                        );
+                      }
                       return Wrap(
                         spacing: gap,
                         runSpacing: gap,
@@ -174,17 +193,29 @@ class _WritingSectionState extends State<WritingSection> {
                   'Personal essays on Medium · not about code at all',
                 ),
                 Reveal(
-                  child: Wrap(
-                    spacing: AppSpacing.lg,
-                    runSpacing: AppSpacing.lg,
-                    alignment: isMobile
-                        ? WrapAlignment.center
-                        : WrapAlignment.start,
-                    children: [
-                      for (var i = 0; i < personal.length; i++)
-                        _PersonalPhone(post: personal[i], index: i),
-                    ],
-                  ),
+                  child: isMobile
+                      // Phones: swipe through the essays side by side.
+                      ? SizedBox(
+                          height: 440,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            itemCount: personal.length,
+                            separatorBuilder: (_, _) =>
+                                const SizedBox(width: AppSpacing.md),
+                            itemBuilder: (_, i) =>
+                                _PersonalPhone(post: personal[i], index: i),
+                          ),
+                        )
+                      : Wrap(
+                          spacing: AppSpacing.lg,
+                          runSpacing: AppSpacing.lg,
+                          children: [
+                            for (var i = 0; i < personal.length; i++)
+                              _PersonalPhone(post: personal[i], index: i),
+                          ],
+                        ),
                 ),
               ],
             ],

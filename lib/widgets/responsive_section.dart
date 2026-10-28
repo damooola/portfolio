@@ -21,7 +21,9 @@ class ResponsiveSection extends StatelessWidget {
       color: background,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? AppSpacing.sm : AppSpacing.xl,
-        vertical: isMobile ? AppSpacing.xl : AppSpacing.xxl,
+        // Phones get tighter rhythm: 2 × xl left ~150px gaps that read as the
+        // end of the page.
+        vertical: isMobile ? AppSpacing.lg : AppSpacing.xxl,
       ),
       child: Center(
         child: ConstrainedBox(

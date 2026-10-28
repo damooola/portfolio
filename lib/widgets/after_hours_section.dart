@@ -12,7 +12,8 @@ class AfterHoursSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ResponsiveSection(
+    final isMobile = AppBreakpoints.isMobile(MediaQuery.sizeOf(context).width);
+    return ResponsiveSection(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -20,12 +21,14 @@ class AfterHoursSection extends StatelessWidget {
             index: '04',
             label: 'After hours',
             title: 'After hours',
-            caption:
-                'What I\'m up to when the laptop closes (mostly). Hover a tile '
-                'to peek inside, click to pin it open.',
+            caption: isMobile
+                ? 'What I\'m up to when the laptop closes (mostly). Tap a tile '
+                      'to open it.'
+                : 'What I\'m up to when the laptop closes (mostly). Hover a tile '
+                      'to peek inside, click to pin it open.',
           ),
-          Reveal(child: NowPlayingStrip()),
-          SizedBox(height: AppSpacing.md),
+          const Reveal(child: NowPlayingStrip()),
+          const SizedBox(height: AppSpacing.md),
         ],
       ),
     );

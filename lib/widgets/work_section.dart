@@ -46,12 +46,15 @@ class WorkSection extends StatelessWidget {
         valueListenable: selected,
         builder: (context, index, _) {
           final project = ProjectsData.projects[index];
+          final phone = _PhoneColumn(index: index, project: project);
+          // On narrow screens the demo opens right under the chosen project,
+          // so nobody has to scroll past every card to reach something to try.
           final list = _ProjectList(
             selected: index,
             onSelect: (i) => select(selected, i),
             compact: isMobile,
+            inline: sideBySide ? null : phone,
           );
-          final phone = _PhoneColumn(index: index, project: project);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,11 +80,8 @@ class WorkSection extends StatelessWidget {
                     ),
                   ],
                 )
-              else ...[
+              else
                 Reveal(child: list),
-                const SizedBox(height: AppSpacing.lg),
-                Reveal(child: Center(child: phone)),
-              ],
             ],
           );
         },
@@ -95,10 +95,14 @@ class _ProjectList extends StatelessWidget {
   final ValueChanged<int> onSelect;
   final bool compact;
 
+  /// Shown directly under the selected tile (narrow layouts only).
+  final Widget? inline;
+
   const _ProjectList({
     required this.selected,
     required this.onSelect,
     required this.compact,
+    this.inline,
   });
 
   @override
@@ -116,6 +120,10 @@ class _ProjectList extends StatelessWidget {
             onTap: () => onSelect(i),
           ),
           const SizedBox(height: AppSpacing.sm),
+          if (inline != null && i == selected) ...[
+            Center(child: inline!),
+            const SizedBox(height: AppSpacing.lg),
+          ],
         ],
         if (!compact) ...[
           const SizedBox(height: AppSpacing.xs),
