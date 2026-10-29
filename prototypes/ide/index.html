@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Damola Nelson · Flutter mobile engineer</title>
+<meta name="description" content="Damola Nelson is a Flutter mobile engineer in Lagos building offline-first fintech and marketplace apps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,300..700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="ide" id="ide">
+
+  <!-- Title bar: project, device + run controls, reading toggle -->
+  <header class="titlebar">
+    <div class="brand">
+      <span class="mark">DN</span>
+      <span class="proj">damola_nelson</span>
+      <span class="branch">⎇ main</span>
+    </div>
+    <div class="run">
+      <button class="device" type="button" title="Target device"><span class="live"></span><span id="deviceName">Chrome (web)</span></button>
+      <button class="ctl" type="button" data-action="reload" title="Hot reload (r)">⚡</button>
+      <button class="ctl" type="button" data-action="restart" title="Hot restart (R)">↻</button>
+    </div>
+    <div class="right">
+      <a class="resume" href="../../assets/resume.pdf" target="_blank" rel="noopener">resume.pdf</a>
+      <button class="toggle" id="readToggle" type="button" aria-pressed="false"><span>Read normally</span><span class="switch"></span></button>
+      <button class="source-btn" id="sourceBtn" type="button" aria-label="View source">&lt;/&gt;</button>
+    </div>
+  </header>
+
+  <!-- Widget tree: the navigation -->
+  <nav class="tree" aria-label="Widget tree">
+    <div class="panel-title">Widget tree <span class="dim">· click to jump</span></div>
+    <ul id="tree"></ul>
+    <div class="props" id="props"></div>
+  </nav>
+
+  <!-- Editor -->
+  <section class="editor" aria-label="Source">
+    <div class="tabs" id="tabs"></div>
+    <div class="crumbs" id="crumbs"></div>
+    <div class="code" id="code"></div>
+  </section>
+
+  <!-- Live preview: the actual page -->
+  <section class="preview-pane" aria-label="Preview">
+    <div class="preview-bar">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url">damola-nelson.web.app<span id="urlHash"></span></span>
+      <span class="size" id="previewSize"></span>
+    </div>
+    <div class="scroller" id="scroller">
+      <main class="page" id="page" data-theme="paper">
+        <div class="flash" id="flash"></div>
+
+        <section class="hero" id="home" data-section="home">
+          <div class="status" data-id="status" data-widget="StatusChip"><i></i><span id="statusText"></span></div>
+          <h1 class="name" data-id="name" data-widget="Text(name)" id="nameText"></h1>
+          <p class="lede" data-id="role" data-widget="Text(role)"><strong id="roleText"></strong> <span id="specialtyText"></span></p>
+          <div class="chips" data-id="platforms" data-widget="Wrap(platforms)" id="platformChips"></div>
+          <div class="stats" data-id="stats" data-widget="Row(stats)" id="stats"></div>
+          <div class="cta" data-id="cta" data-widget="Row(actions)">
+            <a class="btn primary" href="#work" data-jump="work">See the work</a>
+            <a class="btn" href="../../assets/resume.pdf" target="_blank" rel="noopener">Resume</a>
+            <a class="btn" href="mailto:damolanelson@gmail.com">Email</a>
+          </div>
+        </section>
+
+        <section class="block" id="work" data-section="work">
+          <div class="kicker">01 · Work</div>
+          <h2>Three apps, rebuilt as small working demos.</h2>
+          <p class="sub">The real apps belong to the companies I built them for, so these are versions I rebuilt from scratch. Poke them.</p>
+          <div id="projects"></div>
+        </section>
+
+        <section class="block" id="career" data-section="career">
+          <div class="kicker">02 · Career</div>
+          <h2>git log --career</h2>
+          <ol class="timeline" id="timeline"></ol>
+        </section>
+
+        <section class="block" id="writing" data-section="writing">
+          <div class="kicker">03 · Writing</div>
+          <h2>Notes from the desk.</h2>
+          <p class="sub">Things I figured out the hard way, written down so you don’t have to.</p>
+          <div class="row-label"><b>On the record</b><span>Daily Flutters · Hashnode</span></div>
+          <div class="swipe" id="posts"></div>
+          <div class="links">
+            <a class="btn primary" href="https://daily-flutters.hashnode.dev" target="_blank" rel="noopener">All posts on Daily Flutters →</a>
+            <a class="btn" href="https://coderlegion.com/user/damolanelson" target="_blank" rel="noopener">Coder Legion →</a>
+          </div>
+          <div class="row-label"><b>Off the clock</b><span>Personal essays on Medium · not about code at all</span></div>
+          <div class="swipe phones" id="essays"></div>
+        </section>
+
+        <section class="block" id="afterhours" data-section="afterhours">
+          <div class="kicker">04 · After hours</div>
+          <h2>When the laptop closes.</h2>
+          <div class="tiles" id="tiles"></div>
+        </section>
+
+        <section class="block contact" id="contact" data-section="contact">
+          <div class="kicker">05 · Contact</div>
+          <h2>Let’s build something that ships.</h2>
+          <a class="email" href="mailto:damolanelson@gmail.com" data-id="email" data-widget="Text(email)">damolanelson@gmail.com</a>
+          <div class="links">
+            <a class="btn" href="https://github.com/damooola" target="_blank" rel="noopener">GitHub</a>
+            <a class="btn" href="https://www.linkedin.com/in/damola-owonifari" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="btn" href="https://daily-flutters.hashnode.dev" target="_blank" rel="noopener">Blog</a>
+            <a class="btn" href="../../assets/resume.pdf" target="_blank" rel="noopener">Resume</a>
+          </div>
+          <p class="foot">Built in Flutter and plain HTML · Lagos · 2026</p>
+        </section>
+      </main>
+    </div>
+  </section>
+
+  <!-- Console -->
+  <section class="console" aria-label="Console">
+    <div class="console-tabs">
+      <button class="on" type="button" data-console="debug">Debug console</button>
+      <button type="button" data-console="terminal">Terminal</button>
+      <span class="keys"><kbd>r</kbd> hot reload <kbd>R</kbd> restart</span>
+    </div>
+    <div class="console-body" id="consoleBody"></div>
+  </section>
+
+  <!-- Phone: source sheet -->
+  <div class="sheet" id="sheet" aria-hidden="true">
+    <div class="sheet-grab"></div>
+    <div class="sheet-head"><span id="sheetFile">main.dart</span><button type="button" id="sheetClose" aria-label="Close">✕</button></div>
+    <div class="code" id="sheetCode"></div>
+  </div>
+</div>
+</body>
+</html>

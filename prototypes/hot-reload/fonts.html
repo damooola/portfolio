@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Font pairings · Hot reload</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Geist:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Martian+Mono:wdth,wght@75..112.5,300..700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600&family=Space+Mono&family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #E9E6DF; color: #15130F; font: 15px/1.5 system-ui, sans-serif; }
+  header { padding: 40px 48px 8px; }
+  header h1 { margin: 0; font: 600 14px/1 ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; }
+  header p { margin: 10px 0 0; color: #6E675B; max-width: 60ch; }
+  .grid { display: grid; gap: 22px; padding: 28px 48px 64px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 20px 40px -24px rgba(0,0,0,.25); }
+  .page { background: #F6F3EC; padding: 36px 40px; }
+  .code { background: #11141A; color: #C9CFDB; padding: 36px 40px; font-size: 14px; line-height: 1.85; white-space: pre; overflow: auto; }
+  .tag { font: 600 12px/1 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: #8A8375; margin-bottom: 18px; display: flex; gap: 10px; }
+  .tag b { color: #15130F; }
+  .name { font-size: 76px; line-height: .95; margin: 0; }
+  .role { font-size: 20px; line-height: 1.45; margin: 22px 0 0; max-width: 32ch; }
+  .role span { color: #6E675B; }
+  .meta { margin-top: 20px; font-size: 13px; color: #6E675B; }
+  .kw { color: #C792EA; } .ty { color: #7FB8FF; } .pr { color: #E6C07B; } .st { color: #B5D88A; } .va { color: #FF9C7A; } .cm { color: #5B6375; font-style: italic; }
+  .fonts { font: 12px/1.5 ui-monospace, monospace; color: #8A8375; margin-top: 26px; }
+
+  /* 1 · Instrument set */
+  .p1 .name { font-family: "Instrument Serif"; font-weight: 400; letter-spacing: -.02em; }
+  .p1 .name em { color: #0B57D0; }
+  .p1 .role, .p1 .meta { font-family: "Instrument Sans"; }
+  .p1 .code { font-family: "Fragment Mono"; }
+  /* 2 · Fraunces */
+  .p2 .name { font-family: "Fraunces"; font-weight: 340; font-variation-settings: "opsz" 144; letter-spacing: -.03em; }
+  .p2 .name em { color: #B4532A; }
+  .p2 .role, .p2 .meta { font-family: "Geist"; }
+  .p2 .code { font-family: "JetBrains Mono"; }
+  /* 3 · Engineered */
+  .p3 .name { font-family: "Martian Mono"; font-weight: 500; font-stretch: 75%; font-size: 58px; letter-spacing: -.04em; line-height: 1.02; }
+  .p3 .name em { font-style: normal; color: #0B57D0; }
+  .p3 .role, .p3 .meta { font-family: "IBM Plex Sans"; }
+  .p3 .code { font-family: "IBM Plex Mono"; }
+  /* 4 · Studio */
+  .p4 .name { font-family: "Syne"; font-weight: 800; letter-spacing: -.03em; font-size: 70px; }
+  .p4 .name em { font-style: normal; color: #E2483D; }
+  .p4 .role, .p4 .meta { font-family: "Manrope"; }
+  .p4 .code { font-family: "Space Mono"; }
+  /* 5 · Poster */
+  .p5 .name { font-family: "Archivo"; font-weight: 900; font-stretch: 62%; text-transform: uppercase; font-size: 96px; line-height: .86; letter-spacing: -.01em; }
+  .p5 .name em { font-style: normal; color: #0B57D0; }
+  .p5 .role, .p5 .meta { font-family: "Archivo"; font-stretch: 100%; }
+  .p5 .code { font-family: "JetBrains Mono"; }
+
+  @media (max-width: 900px) { .pair { grid-template-columns: 1fr; } .grid, header { padding-left: 18px; padding-right: 18px; } .name { font-size: 54px !important; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Font pairings for “Hot reload”</h1>
+  <p>Same content in each, so only the type changes. Left is the page the code builds; right is the code itself. Pick one, or mix: e.g. the name from one and the code font from another.</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<script>
+  const pairs = [
+    ['1', 'Instrument', 'Elegant editorial serif, crisp sans, a mono with real character. Closest to the prototype.', 'Instrument Serif · Instrument Sans · Fragment Mono'],
+    ['2', 'Soft editorial', 'Warmer, more crafted serif with optical sizing. Feels like a well-made magazine.', 'Fraunces · Geist · JetBrains Mono'],
+    ['3', 'Engineered', 'The name is set in a mono. Precise, technical, unmistakably a developer, still premium.', 'Martian Mono · IBM Plex Sans · IBM Plex Mono'],
+    ['4', 'Studio', 'Bold, expressive display face used by design studios. Most personality, least corporate.', 'Syne · Manrope · Space Mono'],
+    ['5', 'Poster', 'Condensed, heavy, all caps. Loud and confident, in the spirit of "WELCOME TO MY MIND".', 'Archivo (condensed) · Archivo · JetBrains Mono'],
+  ];
+  const code = `<span class="kw">void</span> main() => runApp(
+  <span class="ty">Damola</span>(
+    <span class="pr">role</span>: <span class="st">'Flutter mobile engineer'</span>,
+    <span class="pr">status</span>: <span class="ty">Status</span>.<span class="va">openToWork</span>,
+    <span class="pr">theme</span>: <span class="ty">Theme</span>.<span class="va">paper</span>,
+    <span class="pr">projects</span>: [
+      <span class="ty">FieldAgentApp</span>(),   <span class="cm">// offline-first</span>
+      <span class="ty">LoanApp</span>(),
+      <span class="ty">Ajarra</span>(),
+    ],
+  ),
+);`;
+  document.getElementById('grid').innerHTML = pairs.map(([n, title, why, fonts]) => `
+    <section class="pair p${n}">
+      <div class="page">
+        <div class="tag"><b>${n} · ${title}</b></div>
+        <p class="name">Damola <em>Nelson</em></p>
+        <p class="role">Flutter mobile engineer. <span>I build apps that still work on one bar of signal.</span></p>
+        <p class="meta">${why}</p>
+        <div class="fonts">${fonts}</div>
+      </div>
+      <div class="code">${code}</div>
+    </section>`).join('');
+</script>
+</body>
+</html>

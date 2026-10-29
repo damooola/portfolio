@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damola Nelson · main.dart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /* Prototype of the "Hot reload" concept: source on the left, the page it
+     builds on the right. Editor chrome stays dark; the preview takes the
+     theme chosen in the code. */
+  :root {
+    --editor: #0D0F14;
+    --editor-2: #12151C;
+    --editor-line: rgba(255, 255, 255, 0.06);
+    --code: #C9CFDB;
+    --code-dim: #5B6375;
+    --kw: #C792EA;      /* keywords */
+    --str: #B5D88A;     /* strings */
+    --type: #7FB8FF;    /* classes / types */
+    --prop: #E6C07B;    /* named args */
+    --enum: #FF9C7A;    /* clickable values */
+    --inspect: #4FA3FF; /* inspector overlay */
+
+    --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+    --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Preview themes, switched from the code. */
+  .preview[data-theme="paper"]  { --bg: #F4F1EA; --fg: #15130F; --muted: #6E675B; --line: rgba(21,19,15,.12); --accent: #0B57D0; --chip: #E7E1D4; }
+  .preview[data-theme="night"]  { --bg: #0B0D12; --fg: #EEF0F5; --muted: #8790A3; --line: rgba(255,255,255,.1); --accent: #6EA8FF; --chip: #171B24; }
+  .preview[data-theme="lagos"]  { --bg: #1E2B22; --fg: #F3EAD7; --muted: #B5AB92; --line: rgba(243,234,215,.14); --accent: #F0A04B; --chip: #26362B; }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--editor); color: var(--code); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+  .app { height: 100vh; display: grid; grid-template-rows: 44px 1fr 34px; }
+
+  /* Top bar: tabs + toggle */
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 0 14px; border-bottom: 1px solid var(--editor-line); font: 500 12.5px/1 var(--mono); color: var(--code-dim); }
+  .tabs { display: flex; gap: 2px; height: 100%; align-items: stretch; }
+  .tab { display: flex; align-items: center; gap: 8px; padding: 0 14px; border-top: 1.5px solid transparent; }
+  .tab.on { color: var(--code); background: var(--editor-2); border-top-color: var(--inspect); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #54C07A; }
+  .toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; color: var(--code); background: none; border: 0; font: inherit; }
+  .switch { width: 30px; height: 17px; border-radius: 99px; background: #2A2F3A; position: relative; transition: background .25s; }
+  .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: #fff; transition: transform .3s var(--ease); }
+  .reading .switch { background: var(--inspect); }
+  .reading .switch::after { transform: translateX(13px); }
+
+  .split { display: grid; grid-template-columns: minmax(420px, 44%) 1fr; min-height: 0; transition: grid-template-columns .6s var(--ease); }
+  .reading .split { grid-template-columns: 0 1fr; }
+
+  /* Source */
+  .source { overflow: auto; background: var(--editor-2); border-right: 1px solid var(--editor-line); padding: 26px 0 40px; font: 400 14px/1.85 var(--mono); }
+  .reading .source { padding: 0; border: 0; overflow: hidden; }
+  .line { display: grid; grid-template-columns: 52px 1fr; padding-right: 24px; white-space: pre; transition: background .15s; }
+  .line .n { color: #3A4152; text-align: right; padding-right: 22px; user-select: none; }
+  .line[data-target]:hover, .line.hl { background: rgba(79, 163, 255, 0.08); }
+  .line[data-target]:hover .n, .line.hl .n { color: var(--inspect); }
+  .kw { color: var(--kw); } .str { color: var(--str); } .ty { color: var(--type); } .pr { color: var(--prop); } .cm { color: var(--code-dim); font-style: italic; }
+  .val { color: var(--enum); cursor: pointer; border-bottom: 1px dashed rgba(255,156,122,.5); }
+  .val:hover { background: rgba(255,156,122,.12); }
+  .hint { color: var(--code-dim); font-style: italic; opacity: 0; transition: opacity .3s; }
+  .line:hover .hint, .pulse .hint { opacity: 1; }
+
+  /* Preview */
+  .stage { position: relative; min-height: 0; overflow: auto; }
+  .preview { min-height: 100%; background: var(--bg); color: var(--fg); padding: clamp(28px, 6vw, 88px) clamp(24px, 6vw, 96px) 56px; transition: background .5s var(--ease), color .5s var(--ease); position: relative; }
+  .flash { position: absolute; inset: 0; pointer-events: none; background: rgba(79,163,255,.12); opacity: 0; }
+  .flash.go { animation: flash .55s var(--ease); }
+  @keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+  .status { display: inline-flex; align-items: center; gap: 10px; font: 500 12.5px/1 var(--mono); color: var(--muted); letter-spacing: .02em; padding: 8px 12px; border-radius: 99px; background: var(--chip); }
+  .status i { width: 8px; height: 8px; border-radius: 50%; background: #34A853; box-shadow: 0 0 0 4px rgba(52,168,83,.15); }
+  .status.busy i { background: #E8A13A; box-shadow: 0 0 0 4px rgba(232,161,58,.15); }
+  h1 { font: 400 clamp(64px, 9.5vw, 148px)/0.9 var(--serif); letter-spacing: -0.02em; margin: 28px 0 0; }
+  h1 em { color: var(--accent); }
+  .role { margin-top: 26px; max-width: 30ch; font: 400 clamp(19px, 1.7vw, 24px)/1.4 var(--sans); color: var(--fg); }
+  .role span { color: var(--muted); }
+  .ships { display: flex; gap: 8px; margin-top: 22px; font: 500 12px/1 var(--mono); color: var(--muted); align-items: center; }
+  .ships b { font-weight: 500; color: var(--fg); padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; }
+
+  .work { margin-top: clamp(40px, 6vw, 72px); border-top: 1px solid var(--line); }
+  .work h2 { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 0 6px; }
+  .proj { display: grid; grid-template-columns: 34px 1fr auto; gap: 16px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .proj .i { font: 500 12px/1 var(--mono); color: var(--muted); }
+  .proj .t { font: 400 clamp(24px, 2.4vw, 34px)/1.1 var(--serif); }
+  .proj .t small { display: block; margin-top: 6px; font: 400 14.5px/1.4 var(--sans); color: var(--muted); }
+  .proj .y { font: 500 12px/1 var(--mono); color: var(--muted); }
+  .proj:hover .t { color: var(--accent); }
+
+  .cta { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
+  .btn { font: 500 14.5px/1 var(--sans); padding: 14px 20px; border-radius: 99px; border: 1px solid var(--line); color: var(--fg); text-decoration: none; }
+  .btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  /* Inspector overlay (like Flutter DevTools' "select widget mode") */
+  [data-id] { position: relative; }
+  .inspected { outline: 1.5px solid var(--inspect); outline-offset: 6px; border-radius: 4px; }
+  .inspected::before { content: attr(data-widget); position: absolute; left: -7px; top: -30px; z-index: 2; font: 500 11px/1 var(--mono); color: #fff; background: var(--inspect); padding: 5px 7px; border-radius: 4px; white-space: nowrap; }
+
+  /* Console */
+  .console { display: flex; align-items: center; gap: 12px; padding: 0 16px; border-top: 1px solid var(--editor-line); font: 400 12.5px/1 var(--mono); color: var(--code-dim); overflow: hidden; white-space: nowrap; }
+  .console .k { color: var(--code); border: 1px solid #2A2F3A; border-radius: 4px; padding: 3px 6px; }
+  .console .msg { color: #9AD7A5; transition: opacity .3s; }
+  .console .msg.busy { color: var(--code-dim); }
+  .console .spacer { flex: 1; }
+
+  /* Phones: preview first, the source as a compact block under the name */
+  @media (max-width: 860px) {
+    body { overflow: auto; }
+    .app { height: auto; min-height: 100vh; grid-template-rows: 44px auto 34px; }
+    .split, .reading .split { display: flex; flex-direction: column-reverse; }
+    .source { font-size: 12px; line-height: 1.75; padding: 16px 0 20px; overflow-x: auto; border-right: 0; border-top: 1px solid var(--editor-line); }
+    .line { grid-template-columns: 34px 1fr; padding-right: 12px; }
+    .line .n { padding-right: 12px; }
+    .reading .source { display: none; }
+    .tab:not(.on) { display: none; }
+    .console .hide-sm { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="bar">
+    <div class="tabs">
+      <div class="tab on"><span class="dot"></span>main.dart</div>
+      <div class="tab">projects.dart</div>
+      <div class="tab">career.dart</div>
+    </div>
+    <button class="toggle" id="read" type="button" aria-pressed="false"><span>Read normally</span><span class="switch"></span></button>
+  </div>
+
+  <div class="split">
+    <div class="source" id="source" aria-label="main.dart"></div>
+    <div class="stage">
+      <main class="preview" id="preview" data-theme="paper">
+        <div class="flash" id="flash"></div>
+        <div class="status" id="status" data-id="status" data-widget="StatusChip"><i></i><span>Open to work · Lagos, NG</span></div>
+        <h1 data-id="name" data-widget="Text('Damola Nelson')">Damola <em>Nelson</em></h1>
+        <p class="role" data-id="role" data-widget="Text(role)">Flutter mobile engineer. <span>I build apps that still work on one bar of signal.</span></p>
+        <div class="ships" data-id="ships" data-widget="Row(platforms)">Ships to <b>Android</b><b>iOS</b><b>Web</b></div>
+
+        <section class="work" data-id="projects" data-widget="ListView(projects)">
+          <h2>Selected work · live demos</h2>
+          <div class="proj"><span class="i">01</span><span class="t">NeoCash loan apps<small>Rejection recovery, guided face check, an agent app that syncs offline.</small></span><span class="y">2026</span></div>
+          <div class="proj"><span class="i">02</span><span class="t">Event marketplace<small>Calendar with overlaps, chat that keeps working, live map routes.</small></span><span class="y">2025</span></div>
+          <div class="proj"><span class="i">03</span><span class="t">OTP boxes, done properly<small>Paste, backspace and autofill that never fight you.</small></span><span class="y">2026</span></div>
+        </section>
+
+        <div class="cta" data-id="cta" data-widget="Row(actions)">
+          <a class="btn primary" href="#">Try the demos</a>
+          <a class="btn" href="#">Resume</a>
+          <a class="btn" href="#">damolanelson@gmail.com</a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="console">
+    <span class="msg" id="msg">Flutter run key commands.</span>
+    <span class="spacer"></span>
+    <span class="hide-sm"><span class="k">r</span> Hot reload</span>
+    <span class="hide-sm"><span class="k">R</span> Hot restart</span>
+    <span class="hide-sm">click an <span style="color:var(--enum)">orange value</span> to change it</span>
+  </div>
+</div>
+
+<script>
+  // Each code line: [html, target id in the preview (for hover highlight)].
+  const THEMES = ['paper', 'night', 'lagos'];
+  const STATUS = [
+    ['openToWork', 'Open to work · Lagos, NG', false],
+    ['shipping', 'Heads down, shipping · Lagos, NG', true],
+  ];
+  const state = { theme: 0, status: 0 };
+
+  const k = (s) => `<span class="kw">${s}</span>`;
+  const t = (s) => `<span class="ty">${s}</span>`;
+  const p = (s) => `<span class="pr">${s}</span>`;
+  const q = (s) => `<span class="str">'${s}'</span>`;
+  const c = (s) => `<span class="cm">${s}</span>`;
+  const v = (key, s) => `<span class="val" data-cycle="${key}">${s}</span>`;
+
+  function lines() {
+    return [
+      [`${k('import')} ${q('package:lagos/engineer.dart')};`],
+      [``],
+      [`${k('void')} main() => runApp(`],
+      [`  ${t('Damola')}(`, 'name'],
+      [`    ${p('name')}: ${q('Damola Nelson')},`, 'name'],
+      [`    ${p('role')}: ${q('Flutter mobile engineer')},`, 'role'],
+      [`    ${p('specialty')}: ${q('apps that work on one bar')},`, 'role'],
+      [`    ${p('status')}: ${t('Status')}.${v('status', STATUS[state.status][0])},`, 'status'],
+      [`    ${p('ships')}: [${t('Android')}, ${t('IOS')}, ${t('Web')}],`, 'ships'],
+      [`    ${p('theme')}: ${t('Theme')}.${v('theme', THEMES[state.theme])},  <span class="hint">// try me</span>`, 'theme'],
+      [`    ${p('projects')}: ${k('const')} [`, 'projects'],
+      [`      ${t('NeoCashLoanApps')}(),`, 'projects'],
+      [`      ${t('EventMarketplace')}(),`, 'projects'],
+      [`      ${t('OtpBoxes')}(),`, 'projects'],
+      [`    ],`, 'projects'],
+      [`    ${p('contact')}: ${q('damolanelson@gmail.com')},`, 'cta'],
+      [`  ),`],
+      [`);`],
+      [``],
+      [c('// 2 years shipping to Play Store and App Store.')],
+      [c('// Offline-first, payments, maps, real-time.')],
+    ];
+  }
+
+  const source = document.getElementById('source');
+  const preview = document.getElementById('preview');
+  const msg = document.getElementById('msg');
+
+  function renderSource() {
+    source.innerHTML = lines().map(([html, target], i) =>
+      `<div class="line"${target ? ` data-target="${target}"` : ''}><span class="n">${i + 1}</span><span>${html || ' '}</span></div>`
+    ).join('');
+  }
+
+  function renderPreview() {
+    preview.dataset.theme = THEMES[state.theme];
+    const [, label, busy] = STATUS[state.status];
+    const chip = document.getElementById('status');
+    chip.querySelector('span').textContent = label;
+    chip.classList.toggle('busy', busy);
+  }
+
+  // Hover a line → outline the widget it builds.
+  source.addEventListener('mouseover', (e) => {
+    const line = e.target.closest('.line');
+    document.querySelectorAll('.inspected').forEach((el) => el.classList.remove('inspected'));
+    const id = line && line.dataset.target;
+    if (id === 'theme') { preview.classList.add('inspected'); return; }
+    if (id) document.querySelector(`[data-id="${id}"]`)?.classList.add('inspected');
+  });
+  source.addEventListener('mouseleave', () =>
+    document.querySelectorAll('.inspected').forEach((el) => el.classList.remove('inspected')));
+
+  // Hover a widget → highlight its source lines (the reverse mapping).
+  preview.addEventListener('mouseover', (e) => {
+    const el = e.target.closest('[data-id]');
+    source.querySelectorAll('.hl').forEach((l) => l.classList.remove('hl'));
+    if (el) source.querySelectorAll(`[data-target="${el.dataset.id}"]`).forEach((l) => l.classList.add('hl'));
+  });
+  preview.addEventListener('mouseleave', () => source.querySelectorAll('.hl').forEach((l) => l.classList.remove('hl')));
+
+  // Click an orange value → change it → hot reload.
+  source.addEventListener('click', (e) => {
+    const val = e.target.closest('[data-cycle]');
+    if (!val) return;
+    const key = val.dataset.cycle;
+    const list = key === 'theme' ? THEMES : STATUS;
+    state[key] = (state[key] + 1) % list.length;
+    hotReload(1);
+  });
+
+  let timer;
+  function hotReload(changed) {
+    clearTimeout(timer);
+    msg.classList.add('busy');
+    msg.textContent = 'Performing hot reload...';
+    timer = setTimeout(() => {
+      renderSource();
+      renderPreview();
+      const flash = document.getElementById('flash');
+      flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+      const ms = 180 + Math.round(Math.random() * 140);
+      msg.classList.remove('busy');
+      msg.textContent = `Reloaded ${changed} of 412 libraries in ${ms}ms (compile: ${Math.round(ms * 0.3)} ms, reload: ${Math.round(ms * 0.2)} ms, reassemble: ${Math.round(ms * 0.5)} ms).`;
+    }, 260);
+  }
+
+  function hotRestart() {
+    state.theme = 0; state.status = 0;
+    msg.classList.add('busy');
+    msg.textContent = 'Performing hot restart...';
+    preview.style.opacity = 0;
+    setTimeout(() => {
+      renderSource(); renderPreview();
+      preview.style.transition = 'opacity .5s';
+      preview.style.opacity = 1;
+      msg.classList.remove('busy');
+      msg.textContent = 'Restarted application in 612ms.';
+    }, 400);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'r') hotReload(0);
+    if (e.key === 'R') hotRestart();
+  });
+
+  const app = document.getElementById('app');
+  document.getElementById('read').addEventListener('click', (e) => {
+    const on = app.classList.toggle('reading');
+    e.currentTarget.setAttribute('aria-pressed', String(on));
+    msg.textContent = on ? 'Reading mode: source hidden.' : 'Source visible. Hover a line to inspect it.';
+  });
+
+  renderSource();
+  renderPreview();
+  setTimeout(() => { msg.textContent = 'Hover a line to see what it builds. Click an orange value to change it.'; }, 900);
+</script>
+</body>
+</html>

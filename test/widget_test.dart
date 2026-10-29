@@ -1,14 +1,16 @@
-// Smoke tests: the page builds without layout overflows at phone, tablet
-// and desktop widths, and scrolls all the way to the bottom.
+// The "Hot reload" site: it builds without layout errors at every width,
+// the code really drives the page, and phones get the page plus a source
+// sheet.
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import 'package:portfolio/ide/controller.dart';
+import 'package:portfolio/ide/shell.dart';
 import 'package:portfolio/main.dart';
-import 'package:portfolio/data/portfolio_data.dart';
 import 'package:portfolio/widgets/writing_section.dart';
 
 void main() {
@@ -38,141 +40,128 @@ void main() {
     },
   );
 
-  for (final size in const [Size(390, 844), Size(820, 1180), Size(1440, 900)]) {
-    testWidgets('${size.width.toInt()}px: builds and scrolls cleanly', (
-      tester,
-    ) async {
-      await _pumpAt(tester, size);
-      await _scrollToBottom(tester);
-    });
+  for (final size in const [
+    Size(360, 740), // small phone
+    Size(390, 844), // phone
+    Size(1024, 768), // laptop: no widget tree
+    Size(1440, 900), // desktop
+    Size(1920, 1080),
+  ]) {
+    testWidgets(
+      '${size.width.toInt()}×${size.height.toInt()}: builds and scrolls cleanly',
+      (tester) async {
+        await _pump(tester, size, const PortfolioApp());
+        await tester.drag(_page(), const Offset(0, -40000));
+        await _settle(tester);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 
-  testWidgets('every project and demo tab renders without layout errors', (
+  testWidgets('clicking values in the code changes the page', (tester) async {
+    final c = IdeController();
+    await _pump(tester, const Size(1600, 1000), _app(c));
+
+    // Theme: paper → night.
+    await tester.tap(find.text('paper'));
+    await _settle(tester);
+    expect(c.value('theme'), 'night');
+    expect(find.text('night'), findsOneWidget);
+
+    // Name: the page swaps to the handle.
+    await tester.tap(find.text("'Damola Nelson'"));
+    await _settle(tester);
+    expect(find.textContaining('damooola', findRichText: true), findsWidgets);
+
+    // Web joins the platforms.
+    expect(find.text('Web'), findsNothing);
+    await tester.tap(find.text('false').first);
+    await _settle(tester);
+    expect(find.text('Web'), findsOneWidget);
+
+    // Every change logs a hot reload.
+    expect(c.logs.where((l) => l.text.startsWith('Reloaded')).length, 3);
+  });
+
+  testWidgets('airplaneMode in work.dart takes the field app offline', (
     tester,
   ) async {
-    await _pumpAt(tester, const Size(1440, 1050));
-    await tester.tap(find.text('Work').first);
+    final c = IdeController();
+    await _pump(tester, const Size(1600, 1000), _app(c));
+    await tester.tap(find.text('work.dart').first);
     await _settle(tester);
+    expect(c.file, SourceFile.work);
 
-    for (final project in const [
-      'NeoCash loan apps',
-      'Event marketplace',
-      'OTP boxes, done properly',
-    ]) {
-      await tester.tap(find.text(project));
-      await _settle(tester);
-    }
-    // Projects with several demos: visit every tab except the map, which
-    // needs real tiles.
-    await tester.tap(find.text('NeoCash loan apps'));
+    await tester.tap(find.text('false').first);
     await _settle(tester);
-    for (final tab in const ['Face check', 'Field app', 'Loan fix']) {
-      await tester.tap(find.text(tab));
-      await _settle(tester);
-    }
-
-    await tester.tap(find.text('Event marketplace'));
-    await _settle(tester);
-    for (final tab in const ['Chat', 'Calendar']) {
-      await tester.tap(find.text(tab));
-      await _settle(tester);
-    }
+    expect(c.flag('airplane'), isTrue);
+    expect(c.airplane.value, isTrue);
+    expect(find.textContaining('airplaneMode: true'), findsWidgets);
   });
 
-  testWidgets(
-    'nav name appears once the hero name scrolls away, and leaves again',
-    (tester) async {
-      await _pumpAt(tester, const Size(1440, 900));
-      final navName = find.byWidgetPredicate(
-        (w) => w is Semantics && w.properties.label == ProfileData.name,
-      );
-      expect(navName, findsNothing);
+  testWidgets('tabs, keys and reading mode', (tester) async {
+    final c = IdeController();
+    await _pump(tester, const Size(1600, 1000), _app(c));
 
-      final page = find.byType(SingleChildScrollView).first;
-      await tester.drag(page, const Offset(0, -900));
-      await _settle(tester);
-      expect(navName, findsOneWidget);
+    await tester.tap(find.text('career.log'));
+    await _settle(tester);
+    expect(c.file, SourceFile.career);
+    expect(c.section, 'career');
 
-      await tester.drag(page, const Offset(0, 2000));
-      await _settle(tester);
-      expect(navName, findsNothing);
-    },
-  );
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyR, character: 'r');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyR);
+    await _settle(tester);
+    expect(c.logs.last.text, startsWith('Reloaded 0 of 412'));
 
-  testWidgets('nav links land on sections and reveal them', (tester) async {
-    await _pumpAt(tester, const Size(1440, 1500));
-    for (final (link, title) in const [
-      ('Skills', 'Player profile'),
-      ('Writing', 'Notes from the desk'),
-      ('Contact', "Let's talk"),
-    ]) {
-      await tester.tap(find.text(link));
-      await _settle(tester);
-      final hidden = find.ancestor(
-        of: find.text(title),
-        matching: find.byWidgetPredicate((w) => w is Opacity && w.opacity == 0),
-      );
-      expect(hidden, findsNothing, reason: '$title should be revealed');
-    }
+    await tester.tap(find.text('Read normally'));
+    await _settle(tester);
+    expect(c.reading, isTrue);
+    expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'keyboard: arrows switch projects, ? opens controls, konami fires',
-    (tester) async {
-      await _pumpAt(tester, const Size(1440, 900));
+  testWidgets('phones get the page, and the source slides up', (tester) async {
+    final c = IdeController();
+    await _pump(tester, const Size(390, 844), _app(c));
+    expect(find.text('WIDGET TREE'), findsNothing);
 
-      // Left from the first project wraps to the last one (the OTP demo).
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
-      await _settle(tester);
-      expect(find.text('Verify your number'), findsOneWidget);
+    await tester.tap(find.text('Source'));
+    await _settle(tester);
+    expect(find.text('main.dart'), findsOneWidget);
 
-      // Shift + / types "?".
-      await tester.sendKeyDownEvent(LogicalKeyboardKey.slash, character: '?');
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.slash);
-      await _settle(tester);
-      expect(find.text('Controls'), findsOneWidget);
-      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-      await _settle(tester);
-      expect(find.text('Controls'), findsNothing);
+    // A value near the top is in view straight away.
+    await tester.tap(find.text("'Damola Nelson'"));
+    await _settle(tester);
+    expect(c.value('name'), 'damooola');
 
-      for (final key in const [
-        LogicalKeyboardKey.arrowUp,
-        LogicalKeyboardKey.arrowUp,
-        LogicalKeyboardKey.arrowDown,
-        LogicalKeyboardKey.arrowDown,
-        LogicalKeyboardKey.arrowLeft,
-        LogicalKeyboardKey.arrowRight,
-        LogicalKeyboardKey.arrowLeft,
-        LogicalKeyboardKey.arrowRight,
-        LogicalKeyboardKey.keyB,
-        LogicalKeyboardKey.keyA,
-      ]) {
-        await tester.sendKeyEvent(key);
-      }
-      await tester.pump(const Duration(milliseconds: 600));
-      expect(find.text('Blue is the colour'), findsOneWidget);
-      await _settle(tester); // let the confetti and toast clean up
-    },
-  );
+    // Scroll the sheet's code to reach the theme line.
+    await tester.scrollUntilVisible(
+      find.text('paper'),
+      120,
+      scrollable: find
+          .descendant(
+            of: find.byType(BottomSheet),
+            matching: find.byType(Scrollable),
+          )
+          .at(1),
+    );
+    await tester.tap(find.text('paper'));
+    await _settle(tester);
+    expect(c.value('theme'), 'night');
+    expect(tester.takeException(), isNull);
+  });
 }
 
-Future<void> _pumpAt(WidgetTester tester, Size size) async {
-  // Like the live site: every font must come from assets/google_fonts/.
+Widget _app(IdeController c) => MaterialApp(home: IdeShell(controller: c));
+
+Finder _page() => find.byType(SingleChildScrollView).first;
+
+Future<void> _pump(WidgetTester tester, Size size, Widget app) async {
+  // Like the live site: every font must come from the bundled assets.
   GoogleFonts.config.allowRuntimeFetching = false;
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-
-  await tester.pumpWidget(const PortfolioApp());
-  await _settle(tester);
-  expect(find.text(ProfileData.initials), findsWidgets);
-}
-
-Future<void> _scrollToBottom(WidgetTester tester) async {
-  await tester.drag(
-    find.byType(SingleChildScrollView).first,
-    const Offset(0, -30000),
-  );
+  await tester.pumpWidget(app);
   await _settle(tester);
 }
 

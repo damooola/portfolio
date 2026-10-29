@@ -13,7 +13,12 @@ import '../widgets/demo_phone.dart';
 /// stamping each SYNCED. One row fails on its first attempt and retries
 /// with backoff, the way a real outbox would.
 class OfflineSyncDemo extends StatefulWidget {
-  const OfflineSyncDemo({super.key});
+  /// Optional outside switch for airplane mode (true = offline), e.g. the
+  /// `airplaneMode:` value in the site's code. Kept in sync both ways: the
+  /// in-phone toggle writes back to it.
+  final ValueNotifier<bool>? airplane;
+
+  const OfflineSyncDemo({super.key, this.airplane});
 
   @override
   State<OfflineSyncDemo> createState() => _OfflineSyncDemoState();
@@ -66,6 +71,34 @@ class _OfflineSyncDemoState extends State<OfflineSyncDemo> {
     _customers
       ..add(_make(_Sync.synced))
       ..add(_make(_Sync.synced));
+    widget.airplane?.addListener(_onExternalAirplane);
+    if (widget.airplane?.value ?? false) {
+      _online = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) DemoPhone.setAirplane(context, true);
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(OfflineSyncDemo old) {
+    super.didUpdateWidget(old);
+    if (old.airplane != widget.airplane) {
+      old.airplane?.removeListener(_onExternalAirplane);
+      widget.airplane?.addListener(_onExternalAirplane);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.airplane?.removeListener(_onExternalAirplane);
+    super.dispose();
+  }
+
+  void _onExternalAirplane() {
+    final offline = widget.airplane!.value;
+    if (offline == !_online) return;
+    _toggleOnline();
   }
 
   _Customer _make(_Sync state) {
@@ -90,6 +123,7 @@ class _OfflineSyncDemoState extends State<OfflineSyncDemo> {
     Sfx.play(Sound.click);
     setState(() => _online = !_online);
     DemoPhone.setAirplane(context, !_online);
+    widget.airplane?.value = !_online;
     if (_online) {
       _flush();
     } else {
