@@ -290,7 +290,9 @@ const _nodes = [
 ];
 
 class WidgetTree extends StatelessWidget {
-  const WidgetTree({super.key});
+  final VoidCallback? onCollapse;
+
+  const WidgetTree({super.key, this.onCollapse});
 
   @override
   Widget build(BuildContext context) {
@@ -305,16 +307,13 @@ class WidgetTree extends StatelessWidget {
             child: Row(
               children: [
                 Text('WIDGET TREE', style: Txt.label(Ide.dim, size: 11)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'click to jump',
-                    textAlign: TextAlign.right,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Txt.mono(11, color: Ide.gutter),
+                const Spacer(),
+                if (onCollapse != null)
+                  PaneButton(
+                    icon: Icons.keyboard_double_arrow_left_rounded,
+                    tooltip: 'Hide widget tree',
+                    onTap: onCollapse!,
                   ),
-                ),
               ],
             ),
           ),
@@ -492,7 +491,9 @@ class _Properties extends StatelessWidget {
 // ── Console ───────────────────────────────────────────────────────────────
 
 class DebugConsole extends StatefulWidget {
-  const DebugConsole({super.key});
+  final VoidCallback? onCollapse;
+
+  const DebugConsole({super.key, this.onCollapse});
 
   @override
   State<DebugConsole> createState() => _DebugConsoleState();
@@ -575,6 +576,12 @@ class _DebugConsoleState extends State<DebugConsole> {
                     ),
                   ),
                 ),
+                if (widget.onCollapse != null)
+                  PaneButton(
+                    icon: Icons.keyboard_arrow_down_rounded,
+                    tooltip: 'Hide console',
+                    onTap: widget.onCollapse!,
+                  ),
               ],
             ),
           ),
@@ -738,6 +745,184 @@ class _CommandState extends State<_Command> {
           ],
         ),
         style: Txt.mono(12.5, color: Ide.dim, height: 1.85),
+      ),
+    ),
+  );
+}
+
+/// Small icon button used in pane headers (collapse and the like).
+class PaneButton extends StatefulWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const PaneButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  State<PaneButton> createState() => _PaneButtonState();
+}
+
+class _PaneButtonState extends State<PaneButton> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: widget.tooltip,
+    waitDuration: const Duration(milliseconds: 400),
+    child: MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: Motion.fast,
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: _hover ? Ide.raised : Colors.transparent,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Icon(
+            widget.icon,
+            size: 16,
+            color: _hover ? Ide.bright : Ide.dim,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+// ── Activity bar ──────────────────────────────────────────────────────────
+
+/// VS Code's far-left strip: show or hide each pane.
+class ActivityBar extends StatelessWidget {
+  final bool tree;
+  final bool editor;
+  final bool console;
+  final bool reading;
+  final VoidCallback onTree;
+  final VoidCallback onEditor;
+  final VoidCallback onConsole;
+  final VoidCallback onReading;
+
+  const ActivityBar({
+    super.key,
+    required this.tree,
+    required this.editor,
+    required this.console,
+    required this.reading,
+    required this.onTree,
+    required this.onEditor,
+    required this.onConsole,
+    required this.onReading,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 48,
+    decoration: const BoxDecoration(
+      color: Ide.bg,
+      border: Border(right: BorderSide(color: Ide.line)),
+    ),
+    child: Column(
+      children: [
+        const SizedBox(height: 6),
+        _ActivityIcon(
+          icon: Icons.account_tree_outlined,
+          tooltip: 'Widget tree',
+          on: tree,
+          onTap: onTree,
+        ),
+        _ActivityIcon(
+          icon: Icons.code_rounded,
+          tooltip: 'Editor',
+          on: editor,
+          onTap: onEditor,
+        ),
+        _ActivityIcon(
+          icon: Icons.terminal_rounded,
+          tooltip: 'Debug console',
+          on: console,
+          onTap: onConsole,
+        ),
+        const Spacer(),
+        _ActivityIcon(
+          icon: reading
+              ? Icons.close_fullscreen_rounded
+              : Icons.open_in_full_rounded,
+          tooltip: reading
+              ? 'Show the code again'
+              : 'Page only (read normally)',
+          on: reading,
+          onTap: onReading,
+        ),
+        const SizedBox(height: 8),
+      ],
+    ),
+  );
+}
+
+class _ActivityIcon extends StatefulWidget {
+  final IconData icon;
+  final String tooltip;
+  final bool on;
+  final VoidCallback onTap;
+
+  const _ActivityIcon({
+    required this.icon,
+    required this.tooltip,
+    required this.on,
+    required this.onTap,
+  });
+
+  @override
+  State<_ActivityIcon> createState() => _ActivityIconState();
+}
+
+class _ActivityIconState extends State<_ActivityIcon> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: widget.tooltip,
+    preferBelow: false,
+    verticalOffset: 0,
+    margin: const EdgeInsets.only(left: 56),
+    waitDuration: const Duration(milliseconds: 300),
+    child: Semantics(
+      button: true,
+      toggled: widget.on,
+      label: widget.tooltip,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            height: 46,
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: widget.on ? Ide.flutter : Colors.transparent,
+                  width: 2,
+                ),
+              ),
+            ),
+            child: Icon(
+              widget.icon,
+              size: 21,
+              color: widget.on || _hover ? Ide.bright : Ide.dim,
+            ),
+          ),
+        ),
       ),
     ),
   );

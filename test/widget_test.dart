@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import 'package:portfolio/ide/chrome.dart';
 import 'package:portfolio/ide/controller.dart';
 import 'package:portfolio/ide/shell.dart';
 import 'package:portfolio/main.dart';
@@ -116,6 +117,61 @@ void main() {
     await tester.tap(find.text('Read normally'));
     await _settle(tester);
     expect(c.reading, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('panes collapse, restore and resize like VS Code', (
+    tester,
+  ) async {
+    final c = IdeController();
+    await _pump(tester, const Size(1600, 1000), _app(c));
+    // The pane is the AnimatedContainer around the tree; its content keeps
+    // full width inside the clip while the pane animates.
+    double width(Finder f) => tester
+        .getSize(
+          find.ancestor(of: f, matching: find.byType(AnimatedContainer)).first,
+        )
+        .width;
+
+    // Hide the widget tree, then bring it back from the activity bar.
+    expect(find.text('WIDGET TREE'), findsOneWidget);
+    await tester.tap(find.byTooltip('Hide widget tree'));
+    await _settle(tester);
+    expect(width(find.byType(WidgetTree)), lessThan(1));
+    await tester.tap(find.byTooltip('Widget tree'));
+    await _settle(tester);
+    expect(width(find.byType(WidgetTree)), greaterThan(100));
+
+    // Hide and restore the console.
+    await tester.tap(find.byTooltip('Hide console'));
+    await _settle(tester);
+    expect(find.byType(DebugConsole), findsNothing);
+    await tester.tap(find.byTooltip('Debug console'));
+    await _settle(tester);
+    expect(find.byType(DebugConsole), findsOneWidget);
+
+    // Drag the divider between the tree and the editor.
+    final before = width(find.byType(WidgetTree));
+    final tree = tester.getRect(
+      find
+          .ancestor(
+            of: find.byType(WidgetTree),
+            matching: find.byType(AnimatedContainer),
+          )
+          .first,
+    );
+    await tester.dragFrom(Offset(tree.right + 2, 400), const Offset(80, 0));
+    await _settle(tester);
+    // Flutter keeps the first ~20px as drag slop, so expect most of the 80.
+    expect(width(find.byType(WidgetTree)), greaterThan(before + 50));
+
+    // Page only, then back.
+    await tester.tap(find.byTooltip('Page only (read normally)'));
+    await _settle(tester);
+    expect(c.reading, isTrue);
+    await tester.tap(find.byTooltip('Show the code again'));
+    await _settle(tester);
+    expect(c.reading, isFalse);
     expect(tester.takeException(), isNull);
   });
 

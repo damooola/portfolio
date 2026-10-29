@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -234,13 +235,76 @@ class _IdeShellState extends State<IdeShell> {
     );
   }
 
+  // ── Panes (VS Code style: drag dividers, collapse from the activity bar) ──
+
+  static const _activityW = 48.0;
+  static const _handle = 5.0;
+  static const _minPreview = 360.0;
+
+  bool? _treeOpen;
+  bool _editorOpen = true;
+  bool _consoleOpen = true;
+  double _treeW = 248;
+  double? _editorW;
+  double _consoleH = 176;
+  bool _dragging = false;
+
+  void _togglePane(String pane) {
+    setState(() {
+      if (_c.reading) {
+        // Leaving reading mode by opening a pane shows just that pane.
+        _c.toggleReading();
+        _treeOpen = pane == 'tree';
+        _editorOpen = pane == 'editor' || pane == 'console';
+        _consoleOpen = pane == 'console';
+        return;
+      }
+      switch (pane) {
+        case 'tree':
+          _treeOpen = !(_treeOpen ?? true);
+        case 'editor':
+          _editorOpen = !_editorOpen;
+        case 'console':
+          _consoleOpen = !_consoleOpen;
+      }
+    });
+  }
+
   Widget _desktop(BuildContext context, double width) {
+    _treeOpen ??= width >= Shell.tree;
+    _editorW ??= (width * 0.32).clamp(380.0, 560.0);
     final reading = _c.reading;
-    final showTree = width >= Shell.tree;
-    final treeW = showTree && !reading ? 236.0 : 0.0;
-    final editorTarget = (width * 0.34).clamp(400.0, 580.0);
-    final editorW = reading ? 0.0 : editorTarget;
-    final d = Motion.of(context, Motion.slow);
+    final treeOn = _treeOpen! && !reading;
+    final editorOn = _editorOpen && !reading;
+    final consoleOn = _consoleOpen && !reading;
+    final columnOn = editorOn || consoleOn;
+
+    // Keep the preview at least _minPreview wide whatever the user drags.
+    final room = width - _activityW - _minPreview - _handle * 2;
+    final treeW = _treeW.clamp(
+      170.0,
+      math.max(170.0, math.min(380.0, room - 280)),
+    ).toDouble();
+    final editorW = _editorW!.clamp(
+      280.0,
+      math.max(280.0, room - (treeOn ? treeW : 0)),
+    ).toDouble();
+    final d = _dragging ? Duration.zero : Motion.of(context, Motion.medium);
+
+    Widget pane({required bool on, required double w, required Widget child}) =>
+        AnimatedContainer(
+          duration: d,
+          curve: Motion.ease,
+          width: on ? w : 0,
+          child: ClipRect(
+            child: OverflowBox(
+              alignment: Alignment.centerLeft,
+              minWidth: w,
+              maxWidth: w,
+              child: child,
+            ),
+          ),
+        );
 
     return Scaffold(
       backgroundColor: Ide.bg,
@@ -251,57 +315,83 @@ class _IdeShellState extends State<IdeShell> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AnimatedContainer(
-                  duration: d,
-                  curve: Motion.ease,
-                  width: treeW + editorW,
-                  child: ClipRect(
-                    child: OverflowBox(
-                      alignment: Alignment.centerLeft,
-                      minWidth: (showTree ? 236.0 : 0) + editorTarget,
-                      maxWidth: (showTree ? 236.0 : 0) + editorTarget,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                if (showTree)
-                                  const SizedBox(
-                                    width: 236,
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          right: BorderSide(color: Ide.line),
-                                        ),
-                                      ),
-                                      child: WidgetTree(),
-                                    ),
-                                  ),
-                                const Expanded(child: Editor()),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 176, child: DebugConsole()),
-                        ],
-                      ),
+                ActivityBar(
+                  tree: treeOn,
+                  editor: editorOn,
+                  console: consoleOn,
+                  reading: reading,
+                  onTree: () => _togglePane('tree'),
+                  onEditor: () => _togglePane('editor'),
+                  onConsole: () => _togglePane('console'),
+                  onReading: () => setState(_c.toggleReading),
+                ),
+                pane(
+                  on: treeOn,
+                  w: treeW,
+                  child: WidgetTree(onCollapse: () => _togglePane('tree')),
+                ),
+                if (treeOn)
+                  _ResizeHandle(
+                    axis: Axis.horizontal,
+                    onStart: () => setState(() => _dragging = true),
+                    onEnd: () => setState(() => _dragging = false),
+                    onDrag: (dx) => setState(
+                      () => _treeW = (treeW + dx).clamp(170.0, 380.0),
                     ),
+                    onReset: () => setState(() => _treeW = 248),
+                  ),
+                pane(
+                  on: columnOn,
+                  w: editorW,
+                  child: Column(
+                    children: [
+                      if (editorOn) const Expanded(child: Editor()),
+                      if (editorOn && consoleOn)
+                        _ResizeHandle(
+                          axis: Axis.vertical,
+                          onStart: () => setState(() => _dragging = true),
+                          onEnd: () => setState(() => _dragging = false),
+                          onDrag: (dy) => setState(
+                            () =>
+                                _consoleH = (_consoleH - dy).clamp(90.0, 520.0),
+                          ),
+                          onReset: () => setState(() => _consoleH = 176),
+                        ),
+                      if (consoleOn)
+                        editorOn
+                            ? SizedBox(
+                                height: _consoleH,
+                                child: DebugConsole(
+                                  onCollapse: () => _togglePane('console'),
+                                ),
+                              )
+                            : Expanded(
+                                child: DebugConsole(
+                                  onCollapse: () => _togglePane('console'),
+                                ),
+                              ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: DecoratedBox(
-                    decoration: const BoxDecoration(
-                      border: Border(left: BorderSide(color: Ide.line)),
+                if (columnOn)
+                  _ResizeHandle(
+                    axis: Axis.horizontal,
+                    onStart: () => setState(() => _dragging = true),
+                    onEnd: () => setState(() => _dragging = false),
+                    onDrag: (dx) => setState(() => _editorW = editorW + dx),
+                    onReset: () => setState(
+                      () => _editorW = (width * 0.32).clamp(380.0, 560.0),
                     ),
-                    child: LayoutBuilder(
-                      builder: (context, box) => Column(
-                        children: [
-                          _PreviewBar(
-                            size: Size(box.maxWidth, box.maxHeight - 40),
-                          ),
-                          Expanded(child: _themedPage()),
-                        ],
-                      ),
+                  ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, box) => Column(
+                      children: [
+                        _PreviewBar(
+                          size: Size(box.maxWidth, box.maxHeight - 40),
+                        ),
+                        Expanded(child: _themedPage()),
+                      ],
                     ),
                   ),
                 ),
@@ -588,5 +678,80 @@ class _SourceSheet extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// A draggable divider between panes. Hover shows a blue line, like VS Code;
+/// double-click resets the size.
+class _ResizeHandle extends StatefulWidget {
+  final Axis axis;
+  final ValueChanged<double> onDrag;
+  final VoidCallback onStart;
+  final VoidCallback onEnd;
+  final VoidCallback onReset;
+
+  const _ResizeHandle({
+    required this.axis,
+    required this.onDrag,
+    required this.onStart,
+    required this.onEnd,
+    required this.onReset,
+  });
+
+  @override
+  State<_ResizeHandle> createState() => _ResizeHandleState();
+}
+
+class _ResizeHandleState extends State<_ResizeHandle> {
+  bool _hover = false;
+  bool _active = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final horizontal = widget.axis == Axis.horizontal;
+    final lit = _hover || _active;
+    return MouseRegion(
+      cursor: horizontal
+          ? SystemMouseCursors.resizeColumn
+          : SystemMouseCursors.resizeRow,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onDoubleTap: widget.onReset,
+        onHorizontalDragStart: horizontal ? (_) => _start() : null,
+        onHorizontalDragUpdate: horizontal
+            ? (d) => widget.onDrag(d.delta.dx)
+            : null,
+        onHorizontalDragEnd: horizontal ? (_) => _end() : null,
+        onVerticalDragStart: horizontal ? null : (_) => _start(),
+        onVerticalDragUpdate: horizontal
+            ? null
+            : (d) => widget.onDrag(d.delta.dy),
+        onVerticalDragEnd: horizontal ? null : (_) => _end(),
+        child: SizedBox(
+          width: horizontal ? 5 : double.infinity,
+          height: horizontal ? double.infinity : 5,
+          child: Center(
+            child: AnimatedContainer(
+              duration: Motion.fast,
+              width: horizontal ? (lit ? 3 : 1) : double.infinity,
+              height: horizontal ? double.infinity : (lit ? 3 : 1),
+              color: lit ? Ide.flutter : Ide.line,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _start() {
+    setState(() => _active = true);
+    widget.onStart();
+  }
+
+  void _end() {
+    setState(() => _active = false);
+    widget.onEnd();
   }
 }
