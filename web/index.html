@@ -24,7 +24,7 @@
   <title>Damola Nelson — Flutter Mobile Engineer</title>
   <meta name="description" content="Damola Nelson is a Flutter mobile engineer in Lagos. Live, working demos of offline-first sync, live map tracking and OTP input — all built in Flutter.">
   <meta name="author" content="Damola Nelson">
-  <meta name="theme-color" content="#0A0F1E">
+  <meta name="theme-color" content="#0B0D11">
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Damola Nelson — Flutter Mobile Engineer">
@@ -52,14 +52,14 @@
   <link rel="manifest" href="manifest.json">
 
   <style>
-    html, body { margin: 0; height: 100%; background: #0A0F1E; }
+    html, body { margin: 0; height: 100%; background: #0B0D11; }
 
     /* Loading screen: Flutter web downloads a few MB before the first frame,
        so this matches the site's navy and pulses the initials meanwhile. */
     #loader {
       position: fixed; inset: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
-      background: radial-gradient(circle at 70% 20%, rgba(61, 107, 255, 0.14), transparent 55%), #0A0F1E;
+      background: #0B0D11;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       transition: opacity 300ms ease;
       z-index: 10;
@@ -68,18 +68,18 @@
     #loader .mark {
       width: 64px; height: 64px; border-radius: 16px;
       display: grid; place-items: center;
-      background: #034694; border: 1px solid rgba(61, 107, 255, 0.5);
+      background: #3D8BFF; border: 0;
       color: #E9EDF7; font: 800 24px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: -0.5px;
       animation: pulse 1.4s ease-in-out infinite;
     }
-    #loader .status { color: #8B94AE; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+    #loader .status { color: #8B94AE; font-size: 12px; letter-spacing: 0.02em; }
     #loader .status::before {
       content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 8px;
       border-radius: 50%; background: #4ADE80; vertical-align: 1px;
     }
     @keyframes pulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(61, 107, 255, 0.45); }
-      50% { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(61, 107, 255, 0); }
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(61, 139, 255, 0.45); }
+      50% { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(61, 139, 255, 0); }
     }
     @media (prefers-reduced-motion: reduce) {
       #loader .mark { animation: none; }
@@ -107,7 +107,7 @@
 <body>
   <div id="loader" role="status" aria-label="Loading Damola Nelson's portfolio">
     <div class="mark">DN</div>
-    <div class="status">Booting up</div>
+    <div class="status">flutter run · launching lib/main.dart</div>
     <div class="slow">
       <p>Taking longer than usual on this connection. Here are the essentials while it loads:</p>
       <div class="links">

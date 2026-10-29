@@ -80,6 +80,13 @@ class _IdeShellState extends State<IdeShell> {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _jumpTo(target, null, animate: false),
       );
+      // Fonts, articles and live tiles land a moment later and shift the
+      // layout; settle on the section again once they have.
+      _boot.add(
+        Timer(const Duration(milliseconds: 900), () {
+          if (mounted) _jumpTo(target, null);
+        }),
+      );
     }
   }
 
