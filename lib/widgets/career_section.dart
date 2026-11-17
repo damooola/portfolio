@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_theme.dart';
 import 'hero_section.dart' show PulsingDot;
+import 'contact_section.dart';
 import 'responsive_section.dart';
 import 'reveal.dart';
 import 'section_header.dart';
@@ -111,13 +112,7 @@ class _RoleRowState extends State<_RoleRow> {
             runSpacing: 4,
             children: [
               Text(r.title, style: AppText.heading.copyWith(fontSize: 19)),
-              Text(
-                '@ ${r.company}',
-                style: AppText.heading.copyWith(
-                  fontSize: 19,
-                  color: AppColors.blue,
-                ),
-              ),
+              _CompanyName(role: r),
               if (r.current)
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -246,6 +241,49 @@ class _RoleRowState extends State<_RoleRow> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+/// "@ Company", linked to the company's site when there is one.
+class _CompanyName extends StatefulWidget {
+  final Role role;
+
+  const _CompanyName({required this.role});
+
+  @override
+  State<_CompanyName> createState() => _CompanyNameState();
+}
+
+class _CompanyNameState extends State<_CompanyName> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = widget.role.url;
+    final text = Text(
+      '@ ${widget.role.company}',
+      style: AppText.heading.copyWith(
+        fontSize: 19,
+        color: AppColors.blue,
+        decoration: _hover ? TextDecoration.underline : null,
+        decorationColor: AppColors.blue,
+      ),
+    );
+    if (url == null) return text;
+    return Semantics(
+      link: true,
+      label: '${widget.role.company} website',
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: () => ContactSection.open(url),
+          child: text,
         ),
       ),
     );

@@ -141,6 +141,8 @@ class ProjectsData {
       result:
           'Result: onboarding retention up about 15% and crashes down about '
           '25% on the live customer app.',
+      linkLabel: 'neocash.ng',
+      linkUrl: 'https://neocash.ng/',
     ),
     Project(
       name: 'Event marketplace',
@@ -309,9 +311,13 @@ class Role {
   final String summary;
   final List<String> tags;
 
+  /// The company's site, if it has one; the company name links to it.
+  final String? url;
+
   const Role({
     required this.title,
     required this.company,
+    this.url,
     this.product,
     required this.start,
     required this.end,
@@ -328,6 +334,7 @@ class CareerData {
     Role(
       title: 'Software Engineer',
       company: 'NeoCash',
+      url: 'https://neocash.ng/',
       product: 'Shepherd Trust Microfinance Bank',
       start: 'Jan 2026',
       end: 'Present',
