@@ -57,7 +57,6 @@ void main() {
     for (final project in const [
       'NeoCash loan apps',
       'Event marketplace',
-      'OTP boxes, done properly',
     ]) {
       await tester.tap(find.text(project));
       await _settle(tester);
@@ -121,10 +120,10 @@ void main() {
     (tester) async {
       await _pumpAt(tester, const Size(1440, 900));
 
-      // Left from the first project wraps to the last one (the OTP demo).
+      // Left from the first project wraps to the last one (the marketplace).
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
       await _settle(tester);
-      expect(find.text('Verify your number'), findsOneWidget);
+      expect(find.textContaining('Wedding'), findsWidgets);
 
       // Shift + / types "?".
       await tester.sendKeyDownEvent(LogicalKeyboardKey.slash, character: '?');

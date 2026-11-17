@@ -159,23 +159,6 @@ class ProjectsData {
           'Result: wrote 694 of its 707 commits and shipped it to the App Store '
           'and Google Play.',
     ),
-    Project(
-      name: 'OTP boxes, done properly',
-      org: 'Blog post',
-      period: 'JUN 2026',
-      summary:
-          'Six little boxes that every app gets slightly wrong: focus, paste, '
-          'backspace, autofill. I wrote up how to get them right.',
-      tags: ['Flutter', 'Forms', 'Accessibility', 'UX detail'],
-      demos: [DemoKind.otp],
-      builtForReal:
-          'Built for real: one hidden field driving six boxes, so paste, '
-          'SMS autofill and backspace behave like any normal input.',
-      result: 'Write-up: The OTP Boxes That Would Not Let Go.',
-      linkLabel: 'Read the post',
-      linkUrl:
-          'https://daily-flutters.hashnode.dev/the-otp-boxes-that-would-not-let-go',
-    ),
   ];
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'data/portfolio_data.dart';
 import 'services/sfx.dart';
 import 'theme/app_theme.dart';
 import 'widgets/after_hours_section.dart';
@@ -99,7 +100,10 @@ class _PortfolioHomeState extends State<PortfolioHome> {
     final fragment = Uri.base.fragment.replaceAll('/', '');
     final project = RegExp(r'^work-(\d)$').firstMatch(fragment);
     if (project != null) {
-      _project.value = (int.parse(project.group(1)!) - 1).clamp(0, 2);
+      _project.value = (int.parse(project.group(1)!) - 1).clamp(
+        0,
+        ProjectsData.projects.length - 1,
+      );
     }
     final target = switch (project != null ? 'work' : fragment) {
       'work' => _workKey,
